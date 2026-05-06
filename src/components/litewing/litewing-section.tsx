@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ease } from "@/lib/motion";
 
@@ -67,9 +68,18 @@ export function LiteWingSection() {
             custom ESP-NOW telemetry layer.
           </p>
 
-          <span className="font-mono text-xs uppercase tracking-widest text-text-muted">
-            github coming soon
-          </span>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              href="/litewing"
+              className="group inline-flex items-center gap-2 rounded border border-border-subtle px-6 py-3 font-mono text-sm text-text-primary transition-all duration-200 hover:border-red-primary hover:text-red-glow"
+            >
+              Open simulation
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+            <span className="font-mono text-xs uppercase tracking-widest text-text-muted">
+              github coming soon
+            </span>
+          </div>
         </motion.div>
 
         {/* Right scene */}

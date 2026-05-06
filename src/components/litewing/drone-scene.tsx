@@ -5,43 +5,100 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePrefersReducedMotion } from "@/lib/reduced-motion";
 
-const TILT_MAX = 0.262; // ±15° in radians
-const STIFFNESS = 200;
-const DAMPING = 15;
+export type ControlMode = "cursor" | "hand";
 
-function Drone({ onMove }: { onMove: () => void }) {
+export interface HandPose {
+  /** -1..1, signed horizontal palm-center position in viewport space */
+  x: number;
+  /** -1..1, signed vertical palm-center position (positive = up) */
+  y: number;
+  /** 0..1, hand openness proxy (index-fingertip → wrist span) */
+  z: number;
+  /** True when ≥3 fingertips are curled toward their MCP joints */
+  isFist: boolean;
+}
+
+const CURSOR_TILT_MAX = 15 * (Math.PI / 180); // ±15°
+const HAND_TILT_MAX = 28 * (Math.PI / 180); // ±28°
+const CURSOR_STIFFNESS = 200;
+const CURSOR_DAMPING = 15;
+const HAND_STIFFNESS = 380;
+const HAND_DAMPING = 18;
+const FLIP_DURATION = 0.9;
+
+interface DroneProps {
+  mode: ControlMode;
+  externalPose: HandPose | null;
+  isFlipping: boolean;
+  onMove: () => void;
+}
+
+function Drone({ mode, externalPose, isFlipping, onMove }: DroneProps) {
   const root = useRef<THREE.Group>(null!);
   const propsGroup = useRef<THREE.Group>(null!);
   const { mouse } = useThree();
   const vel = useRef({ z: 0, x: 0 });
   const lastMouse = useRef({ x: 0, y: 0 });
+  // Flip refs: progress is 0..1; the in-flight flag is what we actually
+  // animate against, so a brief prop blip doesn't cut the animation short.
+  const flipProgress = useRef(0);
+  const flipActive = useRef(false);
 
   useFrame((state, dt) => {
     const r = root.current;
     if (r) {
       const t = state.clock.elapsedTime;
-      // Idle bob — bigger so it's visibly alive
       r.position.y = Math.sin(t * 1.4) * 0.15;
 
-      // Spring physics toward cursor target
-      const targetZ = -mouse.x * TILT_MAX;
-      // cursor up → drone pitches forward (away from viewer, top dipping down)
-      const targetX = -mouse.y * TILT_MAX * 0.7;
-      const aZ = (targetZ - r.rotation.z) * STIFFNESS - vel.current.z * DAMPING;
-      const aX = (targetX - r.rotation.x) * STIFFNESS - vel.current.x * DAMPING;
-      vel.current.z += aZ * dt;
-      vel.current.x += aX * dt;
-      r.rotation.z += vel.current.z * dt;
-      r.rotation.x += vel.current.x * dt;
+      // Rising-edge: start a fresh flip when the prop turns true.
+      if (isFlipping && !flipActive.current) {
+        flipActive.current = true;
+        flipProgress.current = 0;
+      }
 
-      // Detect first interaction
-      if (
-        Math.abs(mouse.x - lastMouse.current.x) > 0.02 ||
-        Math.abs(mouse.y - lastMouse.current.y) > 0.02
-      ) {
-        onMove();
-        lastMouse.current.x = mouse.x;
-        lastMouse.current.y = mouse.y;
+      if (flipActive.current) {
+        flipProgress.current += dt / FLIP_DURATION;
+        if (flipProgress.current >= 1) {
+          flipActive.current = false;
+          flipProgress.current = 1;
+          // Snap back to neutral so the spring has a clean starting point.
+          r.rotation.z = 0;
+          vel.current.z = 0;
+        } else {
+          const tt = flipProgress.current;
+          const eased = tt < 0.5 ? 2 * tt * tt : -1 + (4 - 2 * tt) * tt;
+          r.rotation.z = eased * Math.PI * 2;
+        }
+      } else {
+        const useHand = mode === "hand" && externalPose !== null;
+        const inputX = useHand ? externalPose.x : mouse.x;
+        const inputY = useHand ? externalPose.y : mouse.y;
+
+        const tiltMax = mode === "hand" ? HAND_TILT_MAX : CURSOR_TILT_MAX;
+        const stiffness = mode === "hand" ? HAND_STIFFNESS : CURSOR_STIFFNESS;
+        const damping = mode === "hand" ? HAND_DAMPING : CURSOR_DAMPING;
+
+        const targetZ = -inputX * tiltMax;
+        // cursor/hand up → drone pitches forward
+        const targetX = -inputY * tiltMax * (useHand ? 1.0 : 0.7);
+        const aZ = (targetZ - r.rotation.z) * stiffness - vel.current.z * damping;
+        const aX = (targetX - r.rotation.x) * stiffness - vel.current.x * damping;
+        vel.current.z += aZ * dt;
+        vel.current.x += aX * dt;
+        r.rotation.z += vel.current.z * dt;
+        r.rotation.x += vel.current.x * dt;
+
+        // First-interaction detection (cursor mode only — drives the homepage hint)
+        if (mode === "cursor") {
+          if (
+            Math.abs(mouse.x - lastMouse.current.x) > 0.02 ||
+            Math.abs(mouse.y - lastMouse.current.y) > 0.02
+          ) {
+            onMove();
+            lastMouse.current.x = mouse.x;
+            lastMouse.current.y = mouse.y;
+          }
+        }
       }
     }
     const pg = propsGroup.current;
@@ -79,7 +136,7 @@ function Drone({ onMove }: { onMove: () => void }) {
                 <meshStandardMaterial color="#222" metalness={0.8} roughness={0.4} />
               </mesh>
             </group>
-            <mesh position={[pos[0], 0.05, pos[2]]}>
+            <mesh position={[pos[0], 0.05, pos[2]]} rotation={[Math.PI / 2, 0, 0]} castShadow>
               <cylinderGeometry args={[0.07, 0.07, 0.08, 18]} />
               <meshStandardMaterial color="#0a0a0a" metalness={0.9} roughness={0.2} />
             </mesh>
@@ -104,7 +161,22 @@ function Drone({ onMove }: { onMove: () => void }) {
   );
 }
 
-export function DroneScene({ onInteract }: { onInteract?: () => void }) {
+interface DroneSceneProps {
+  /** Default `cursor` for the homepage tile; `/litewing` flips to `hand` after permission. */
+  mode?: ControlMode;
+  /** Latest hand pose from MediaPipe; consumed only when mode === "hand". */
+  externalPose?: HandPose | null;
+  /** Rising-edge trigger from the page — true for ~900ms while a flip plays. */
+  isFlipping?: boolean;
+  onInteract?: () => void;
+}
+
+export function DroneScene({
+  mode = "cursor",
+  externalPose = null,
+  isFlipping = false,
+  onInteract,
+}: DroneSceneProps) {
   const reduced = usePrefersReducedMotion();
   const fired = useRef(false);
   const fire = () => {
@@ -123,7 +195,12 @@ export function DroneScene({ onInteract }: { onInteract?: () => void }) {
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 8, 5]} intensity={0.9} />
       <pointLight position={[-3, 2, -2]} color="#FF1744" intensity={2} distance={10} />
-      <Drone onMove={fire} />
+      <Drone
+        mode={mode}
+        externalPose={externalPose}
+        isFlipping={isFlipping}
+        onMove={fire}
+      />
     </Canvas>
   );
 }

@@ -75,7 +75,7 @@ export function Contact() {
           <div className="font-mono">
             Built with Next.js, Three.js, Framer Motion ·{" "}
             <a
-              href="https://github.com/mkskart"
+              href="https://github.com/mkskart/portfolio"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-red-glow"

@@ -76,9 +76,14 @@ export function LiteWingSection() {
               Open simulation
               <span className="transition-transform group-hover:translate-x-1">→</span>
             </Link>
-            <span className="font-mono text-xs uppercase tracking-widest text-text-muted">
-              github coming soon
-            </span>
+            <a
+              href="https://github.com/mkskart/litewing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs uppercase tracking-widest text-text-muted transition-colors hover:text-red-glow"
+            >
+              GitHub →
+            </a>
           </div>
         </motion.div>
 

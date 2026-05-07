@@ -244,17 +244,29 @@ export function CircuitCanvas() {
 
     const isMobile = window.innerWidth < 768;
     let animId = 0;
+    // Logical (CSS) pixel dimensions — drawing code uses these so coordinates
+    // stay sane regardless of the device pixel ratio. The canvas backing
+    // store is scaled by DPR for crispness; ctx.scale(dpr,dpr) compensates.
+    let logicalWidth = window.innerWidth;
+    let logicalHeight = window.innerHeight;
 
     function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      logicalWidth = window.innerWidth;
+      logicalHeight = window.innerHeight;
+      canvas.width = logicalWidth * dpr;
+      canvas.height = logicalHeight * dpr;
+      canvas.style.width = logicalWidth + "px";
+      canvas.style.height = logicalHeight + "px";
+      // Setting canvas.width resets the transform — re-apply scale every time.
+      ctx.scale(dpr, dpr);
     }
     resize();
     window.addEventListener("resize", resize);
 
     // ── Build the PCB graph ─────────────────────────────────────────────────────
-    const cols = Math.floor(canvas.width / GRID);
-    const rows = Math.floor(canvas.height / GRID);
+    const cols = Math.floor(logicalWidth / GRID);
+    const rows = Math.floor(logicalHeight / GRID);
 
     const nodes: Node[] = [];
     const nodeMap = new Map<string, number>();
@@ -512,7 +524,7 @@ export function CircuitCanvas() {
     }
 
     function tick() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, logicalWidth, logicalHeight);
 
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;

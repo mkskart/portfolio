@@ -11,8 +11,8 @@ interface Card {
   blurb: string;
   detail: string;
   stack: string[];
-  /** Show a "github coming soon" placeholder in the modal — for personal projects whose repos aren't public yet. */
-  githubPending?: boolean;
+  /** Public repo URL — rendered as a "GitHub →" link in the modal. Omit for projects with no public repo (e.g. research, proprietary). */
+  github?: string;
 }
 
 const CARDS: Card[] = [
@@ -32,7 +32,7 @@ const CARDS: Card[] = [
     detail:
       "Modular command engine routing voice intents to API actions. RAG pipeline over personal context for task memory, integrated with YouTube Music, Google Calendar, and Google SDM for cross-device control.",
     stack: ["Python", "FastAPI", "RAG", "LLMs"],
-    githubPending: true,
+    github: "https://github.com/mkskart/jarvis",
   },
   {
     title: "Smart Scheduler",
@@ -41,7 +41,7 @@ const CARDS: Card[] = [
     detail:
       "RESTful Python/SQLAlchemy backend with a scheduling engine validated by 120+ Pytest unit tests, integrated with Google OAuth 2.0 in a Docker Compose microservice stack. Type-safe React + TypeScript frontend.",
     stack: ["Python", "SQLAlchemy", "React", "TypeScript", "Docker"],
-    githubPending: true,
+    github: "https://github.com/mkskart/smartschedule",
   },
   {
     title: "Obstacle Avoidance Robot",
@@ -50,7 +50,7 @@ const CARDS: Card[] = [
     detail:
       "Hybrid Arduino/Raspberry Pi platform fusing time-of-flight and ultrasonic sensors, with checksum-validated packet delivery between boards. Dijkstra-based pathfinding tested on a custom obstacle course.",
     stack: ["C++", "Arduino", "Raspberry Pi", "Sensor fusion"],
-    githubPending: true,
+    github: "https://github.com/mkskart/obstacle-avoidance",
   },
 ];
 
@@ -169,10 +169,15 @@ export function OtherWork() {
                     </span>
                   ))}
                 </div>
-                {open.githubPending && (
-                  <p className="font-mono text-xs uppercase tracking-widest text-text-muted">
-                    github coming soon
-                  </p>
+                {open.github && (
+                  <a
+                    href={open.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 font-mono text-xs text-text-muted transition-colors hover:text-red-glow"
+                  >
+                    GitHub →
+                  </a>
                 )}
               </div>
             </motion.div>

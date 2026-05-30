@@ -10,7 +10,7 @@ import { ease } from "@/lib/motion";
 export function TradingSection() {
   return (
     <section
-      id="work"
+      id="quantclaw-feature"
       className="relative px-6 py-24 md:py-32"
       aria-labelledby="trading-bot-title"
     >
@@ -33,12 +33,14 @@ export function TradingSection() {
               id="trading-bot-title"
               className="font-display text-4xl font-semibold leading-[1.05] tracking-tight md:text-[3.5rem]"
             >
-              Autonomous{" "}
               <span className="bg-gradient-to-br from-red-primary via-red-glow to-amber-200 bg-clip-text text-transparent">
-                Algorithmic
-              </span>{" "}
-              Trading Agent
+                QuantClaw
+              </span>
             </h2>
+
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-text-muted">
+              Algorithmic Trading Engine
+            </p>
 
             <p className="max-w-[44ch] text-lg leading-relaxed text-text-secondary">
               A self-improving genetic system paired with an LLM-driven
@@ -75,7 +77,7 @@ export function TradingSection() {
 
             <Link
               href="/trading-bot"
-              className="group inline-flex items-center gap-2 rounded-md border border-red-primary px-5 py-2.5 text-sm font-medium text-red-glow transition-all duration-200 hover:bg-red-primary hover:text-white hover:shadow-[0_0_24px_-4px_rgba(255,23,68,0.6)]"
+              className="group inline-flex items-center gap-2 rounded-md border border-red-primary px-5 py-2.5 text-sm font-medium text-red-glow transition-all duration-200 hover:bg-red-primary hover:text-white hover:shadow-[0_0_24px_-4px_var(--glow-a60)]"
             >
               See the deep dive
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

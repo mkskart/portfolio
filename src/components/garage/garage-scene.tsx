@@ -12,6 +12,8 @@ import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { GLBCar } from "./glb-car";
 
+// intentional red: car-specific scene lighting (Ferrari/Red Bull aesthetic).
+
 export type ControlsRef = React.RefObject<OrbitControlsImpl | null>;
 
 interface SceneProps {

@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { SiteMode } from "@/lib/mode";
+import { MODE_CONTENT } from "@/lib/mode-content";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -43,10 +45,11 @@ const GROUPS: { label: string; items: string[] }[] = [
   },
 ];
 
-export function Skills() {
+export function Skills({ mode }: { mode?: SiteMode }) {
+  const groups = mode ? MODE_CONTENT[mode].skillCategories : GROUPS;
   return (
     <div className="space-y-4">
-      {GROUPS.map((g) => (
+      {groups.map((g) => (
         <div key={g.label} className="grid grid-cols-1 gap-3 md:grid-cols-[140px_1fr]">
           <div className="font-mono text-[11px] uppercase tracking-widest text-text-muted">
             {g.label}

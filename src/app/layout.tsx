@@ -4,6 +4,7 @@ import "./globals.css";
 import { Nav } from "@/components/nav";
 import { EasterEggLayer } from "@/components/easter-eggs/easter-egg-layer";
 import { SectionIndicatorMount } from "@/components/section-indicator-mount";
+import { ModeProvider } from "@/lib/mode-context";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
     template: "%s · Kartheek Mukkavilli",
   },
   description:
-    "ECE @ UT Austin building embedded systems, training transformers for bionic hands, and running an autonomous trading agent.",
+    "ECE @ UT Austin building embedded systems, training transformers for bionic hands, and running QuantClaw, an algorithmic trading engine.",
   keywords: [
     "Kartheek Mukkavilli",
     "UT Austin",
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kartheek Mukkavilli",
     description:
-      "Embedded systems, machine learning, and an autonomous trading agent — built by an ECE sophomore at UT Austin.",
+      "Embedded systems, machine learning, and QuantClaw — an algorithmic trading engine — built by an ECE rising junior at UT Austin.",
     url: "https://kartheekkmukkavilli.com",
     siteName: "Kartheek Mukkavilli",
     locale: "en_US",
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kartheek Mukkavilli",
     description:
-      "Embedded systems, machine learning, and an autonomous trading agent.",
+      "Embedded systems, machine learning, and QuantClaw — an algorithmic trading engine.",
   },
   robots: { index: true, follow: true },
 };
@@ -113,12 +114,14 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <Nav />
-        <SectionIndicatorMount />
-        <main id="main" className="relative">
-          {children}
-        </main>
-        <EasterEggLayer />
+        <ModeProvider>
+          <Nav />
+          <SectionIndicatorMount />
+          <main id="main" className="relative">
+            {children}
+          </main>
+          <EasterEggLayer />
+        </ModeProvider>
       </body>
     </html>
   );

@@ -45,7 +45,7 @@ export function Tier2Card({ car, onPromote }: Props) {
       type="button"
       onClick={onPromote ? () => onPromote(car) : undefined}
       disabled={!onPromote}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded border border-border-subtle bg-bg-elevated text-left transition-all duration-300 hover:-translate-y-1 hover:border-red-glow hover:shadow-[0_8px_30px_-12px_rgba(255,23,68,0.4)]"
+      className="group flex cursor-pointer flex-col overflow-hidden rounded border border-border-subtle bg-bg-elevated text-left transition-all duration-300 hover:-translate-y-1 hover:border-red-glow hover:shadow-[0_8px_30px_-12px_var(--glow-a40)]"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-bg-base">
         {/* Desktop: lazy mini 3D viewer */}

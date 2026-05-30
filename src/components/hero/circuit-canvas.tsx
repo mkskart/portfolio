@@ -44,6 +44,7 @@ interface Signal {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const GRID = 20;
+// intentional red: the circuit board is the firmware-only hero background.
 const TRACE_COLOR_PRIMARY = "#E10600";
 const TRACE_COLOR_SECONDARY = "#FF4444";
 const PAD_COLOR = "#FF6644";

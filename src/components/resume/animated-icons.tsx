@@ -10,7 +10,7 @@ export function UTTower({ size = 36 }: { size?: number }) {
   const inView = useInView(ref, { once: true, margin: "-15%" });
 
   return (
-    <svg ref={ref} viewBox="0 0 60 80" width={size} height={(size * 80) / 60} aria-hidden>
+    <svg ref={ref} viewBox="0 0 60 80" width={size} height={(size * 80) / 60} aria-hidden style={{ color: "var(--accent-glow)" }}>
       {/* Base */}
       <motion.rect
         initial={{ scaleY: 0, originY: 1 }}
@@ -21,7 +21,7 @@ export function UTTower({ size = 36 }: { size?: number }) {
         width="48"
         height="26"
         fill="none"
-        stroke="#FF1744"
+        stroke="currentColor"
         strokeWidth="1.4"
       />
       {/* Body */}
@@ -34,7 +34,7 @@ export function UTTower({ size = 36 }: { size?: number }) {
         width="20"
         height="34"
         fill="none"
-        stroke="#FF1744"
+        stroke="currentColor"
         strokeWidth="1.4"
       />
       {/* Top */}
@@ -47,7 +47,7 @@ export function UTTower({ size = 36 }: { size?: number }) {
         width="12"
         height="12"
         fill="none"
-        stroke="#FF1744"
+        stroke="currentColor"
         strokeWidth="1.4"
       />
       {/* Spire */}
@@ -59,7 +59,7 @@ export function UTTower({ size = 36 }: { size?: number }) {
         y1="2"
         x2="30"
         y2="10"
-        stroke="#FF1744"
+        stroke="currentColor"
         strokeWidth="1.4"
       />
       {/* Window slits */}
@@ -73,7 +73,7 @@ export function UTTower({ size = 36 }: { size?: number }) {
           x2="36"
           y1={y}
           y2={y}
-          stroke="#FF1744"
+          stroke="currentColor"
           strokeWidth="0.6"
         />
       ))}
@@ -86,7 +86,7 @@ export function ChipPulse({ size = 28 }: { size?: number }) {
   const inView = useInView(ref, { once: true, margin: "-15%" });
 
   return (
-    <svg ref={ref} viewBox="0 0 40 40" width={size} height={size} aria-hidden>
+    <svg ref={ref} viewBox="0 0 40 40" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
       <motion.rect
         initial={{ opacity: 0, scale: 0.6 }}
         animate={{ opacity: inView ? 1 : 0, scale: inView ? 1 : 0.6 }}
@@ -97,23 +97,23 @@ export function ChipPulse({ size = 28 }: { size?: number }) {
         height="20"
         rx="2"
         fill="none"
-        stroke="#FF1744"
+        stroke="currentColor"
         strokeWidth="1.4"
       />
       {/* pins */}
       {[14, 20, 26].map((p) => (
         <g key={p}>
-          <line x1={p} x2={p} y1="6" y2="10" stroke="#FF1744" strokeWidth="1.2" />
-          <line x1={p} x2={p} y1="30" y2="34" stroke="#FF1744" strokeWidth="1.2" />
-          <line x1="6" x2="10" y1={p} y2={p} stroke="#FF1744" strokeWidth="1.2" />
-          <line x1="30" x2="34" y1={p} y2={p} stroke="#FF1744" strokeWidth="1.2" />
+          <line x1={p} x2={p} y1="6" y2="10" stroke="currentColor" strokeWidth="1.2" />
+          <line x1={p} x2={p} y1="30" y2="34" stroke="currentColor" strokeWidth="1.2" />
+          <line x1="6" x2="10" y1={p} y2={p} stroke="currentColor" strokeWidth="1.2" />
+          <line x1="30" x2="34" y1={p} y2={p} stroke="currentColor" strokeWidth="1.2" />
         </g>
       ))}
       <motion.circle
         cx="20"
         cy="20"
         r="3"
-        fill="#FF1744"
+        fill="currentColor"
         animate={{ opacity: [0.4, 1, 0.4], scale: [0.8, 1.1, 0.8] }}
         transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -139,11 +139,11 @@ export function Waveform({ width = 90, height = 28 }: { width?: number; height?:
       })
       .join(" ");
   return (
-    <svg ref={ref} viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden>
+    <svg ref={ref} viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden style={{ color: "var(--accent-glow)" }}>
       <motion.path
         d={path}
         fill="none"
-        stroke="#FF1744"
+        stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
         initial={{ pathLength: 0 }}
@@ -221,11 +221,11 @@ export function LogicAnalyzer({ width = 100, height = 28 }: { width?: number; he
   }
 
   return (
-    <svg ref={ref} viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden>
+    <svg ref={ref} viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden style={{ color: "var(--accent-glow)" }}>
       <motion.path
         d={"M " + pts}
         fill="none"
-        stroke="#FF1744"
+        stroke="currentColor"
         strokeWidth="1.4"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: inView ? 1 : 0 }}
@@ -236,7 +236,7 @@ export function LogicAnalyzer({ width = 100, height = 28 }: { width?: number; he
         x2={width * 0.5}
         y1="0"
         y2={height}
-        stroke="#FF1744"
+        stroke="currentColor"
         strokeOpacity="0.4"
         strokeDasharray="2 2"
         initial={{ opacity: 0 }}

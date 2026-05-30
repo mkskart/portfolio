@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import type { HandPose } from "./drone-scene";
 
+// intentional red: LiteWing REC indicator, firmware-only context.
+
 interface Props {
   onHandPose: (pose: HandPose) => void;
   active: boolean;

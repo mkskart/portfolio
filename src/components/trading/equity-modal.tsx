@@ -118,11 +118,12 @@ function EquityModalInner({ onClose }: { onClose: () => void }) {
                 onMouseMove={onMove}
                 onMouseLeave={() => setHoverIdx(null)}
                 className="block h-[60vh] w-full cursor-crosshair"
+                style={{ color: "var(--accent-glow)" }}
               >
                 <defs>
                   <linearGradient id="modal-area" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#FF1744" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#FF1744" stopOpacity="0" />
+                    <stop offset="0%" stopColor="currentColor" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
                   </linearGradient>
                 </defs>
                 {Array.from({ length: 6 }).map((_, i) => (
@@ -140,7 +141,7 @@ function EquityModalInner({ onClose }: { onClose: () => void }) {
                   d={`${path} L ${w - pad},${h - pad} L ${pad},${h - pad} Z`}
                   fill="url(#modal-area)"
                 />
-                <path d={path} fill="none" stroke="#FF1744" strokeWidth="2" />
+                <path d={path} fill="none" stroke="currentColor" strokeWidth="2" />
 
                 {hoverX !== null && hoverY !== null && (
                   <g>
@@ -149,11 +150,11 @@ function EquityModalInner({ onClose }: { onClose: () => void }) {
                       x2={hoverX}
                       y1={pad}
                       y2={h - pad}
-                      stroke="#FF1744"
+                      stroke="currentColor"
                       strokeDasharray="3 3"
                       strokeOpacity="0.6"
                     />
-                    <circle cx={hoverX} cy={hoverY} r="5" fill="#FF1744" />
+                    <circle cx={hoverX} cy={hoverY} r="5" fill="currentColor" />
                   </g>
                 )}
               </svg>

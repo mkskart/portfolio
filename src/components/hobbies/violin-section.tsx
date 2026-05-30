@@ -23,7 +23,9 @@ const MODES: Record<Mode, ModeConfig> = {
     composer: "A. Vivaldi",
     audioSrc: "/violin/western.mp3",
     description: "SAMPADA Certified · ABRSM Grade 5",
-    accentColor: "#E10600",
+    // theme-aware: follows the active site mode accent (Carnatic keeps its
+    // distinct cultural orange below).
+    accentColor: "var(--accent)",
     heading: ["Professional", "Violinist"],
   },
   carnatic: {
@@ -114,12 +116,27 @@ export function ViolinSection({ id }: { id?: string }) {
 
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
-    const accent = MODES[mode].accentColor;
+    const rawAccent = MODES[mode].accentColor;
+
+    // The canvas can't parse `var(--accent)`, so resolve it to a concrete hex.
+    // Read each frame so it tracks live theme (mode) changes.
+    const resolveAccent = () => {
+      if (rawAccent.startsWith("var(")) {
+        const name = rawAccent.slice(4, -1).trim();
+        return (
+          getComputedStyle(document.documentElement)
+            .getPropertyValue(name)
+            .trim() || "#e10600"
+        );
+      }
+      return rawAccent;
+    };
 
     const render = () => {
       animFrameRef.current = requestAnimationFrame(render);
       analyser.getByteFrequencyData(dataArray);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const accent = resolveAccent();
 
       const barWidth = (canvas.width / bufferLength) * 2.5;
       let x = 0;

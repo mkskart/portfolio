@@ -5,6 +5,9 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePrefersReducedMotion } from "@/lib/reduced-motion";
 
+// intentional red: the LiteWing drone is a firmware-only hero visual (the
+// section is only featured in firmware mode), so its LED/light reds are fixed.
+
 export type ControlMode = "cursor" | "hand";
 
 export interface HandPose {

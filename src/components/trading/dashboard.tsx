@@ -12,7 +12,7 @@ export function Dashboard() {
 
   return (
     <>
-      <div className="glass-red red-glow rounded-2xl p-1 shadow-[0_30px_80px_-20px_rgba(255,23,68,0.2)]">
+      <div className="glass-red red-glow rounded-2xl p-1 shadow-[0_30px_80px_-20px_var(--glow-a20)]">
         <div className="rounded-[14px] bg-bg-base/70 p-4 md:p-5">
           {/* Header bar */}
           <div className="flex items-center justify-between border-b border-border-subtle pb-3">

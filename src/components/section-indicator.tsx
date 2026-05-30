@@ -12,7 +12,7 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: "intro", label: "Intro" },
-  { id: "work", label: "Trading Bot" },
+  { id: "work", label: "Featured" },
   { id: "litewing", label: "LiteWing" },
   { id: "other-work", label: "Other Work" },
   { id: "hobbies", label: "F1" },
@@ -95,9 +95,14 @@ export function SectionIndicator() {
                 <span
                   className={`block transition-all duration-300 ${
                     isActive
-                      ? "h-2 w-2 rounded-full bg-red-glow shadow-[0_0_10px_rgba(255,23,68,0.7)]"
+                      ? "h-2 w-2 rounded-full bg-red-glow"
                       : "h-1.5 w-1.5 rounded-full bg-text-muted/40 hover:bg-text-secondary"
                   }`}
+                  style={
+                    isActive
+                      ? { boxShadow: "0 0 10px color-mix(in srgb, var(--red-glow) 70%, transparent)" }
+                      : undefined
+                  }
                 />
               </button>
               {isHovered && (

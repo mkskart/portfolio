@@ -8,9 +8,9 @@ import { ConfidenceHistogram } from "@/components/trading/confidence-histogram";
 import { CountUp } from "@/components/count-up";
 
 export const metadata: Metadata = {
-  title: "Autonomous Algorithmic Trading Agent",
+  title: "QuantClaw — Algorithmic Trading Engine",
   description:
-    "A self-improving genetic system paired with an LLM-driven decision engine, running on real market data.",
+    "QuantClaw — a self-improving genetic system paired with an LLM-driven decision engine, running on real market data.",
 };
 
 const STACK = ["Python", "PyTorch", "Groq API", "Flask", "Alpaca", "Isolation Forest"];
@@ -56,12 +56,13 @@ export default function TradingBotPage() {
           </span>
 
           <h1 className="mt-6 max-w-[18ch] font-display text-5xl font-semibold leading-[1.02] tracking-tighter md:text-[5.5rem]">
-            Autonomous{" "}
             <span className="bg-gradient-to-br from-red-primary via-red-glow to-amber-200 bg-clip-text text-transparent">
-              Algorithmic
-            </span>{" "}
-            Trading Agent
+              QuantClaw
+            </span>
           </h1>
+          <p className="mt-3 font-mono text-sm uppercase tracking-[0.3em] text-text-muted">
+            Algorithmic Trading Engine
+          </p>
 
           <p className="mt-6 max-w-[60ch] text-lg leading-relaxed text-text-secondary md:text-xl">
             Two architectures, one mandate: don&apos;t lose money. A

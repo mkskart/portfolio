@@ -42,8 +42,8 @@ export function ConfidenceHistogram() {
           style={{
             background:
               i / 20 > 0.55 && i / 20 < 0.7
-                ? "linear-gradient(to top, #FF1744, #8B0000)"
-                : "linear-gradient(to top, #1f1f1f, #2A0808)",
+                ? "linear-gradient(to top, var(--accent-glow), var(--accent-deep))"
+                : "linear-gradient(to top, #1f1f1f, var(--accent-border))",
           }}
         />
       ))}

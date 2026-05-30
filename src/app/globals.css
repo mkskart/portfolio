@@ -8,7 +8,9 @@
   --border-subtle: #1f1f1f;
   --border-accent: #2a0808;
 
-  /* Reds */
+  /* Accent (default = firmware red). These are the live theme channels; the
+     per-mode [data-mode] blocks below override them so the entire site
+     recolors. The semantic --accent* aliases follow automatically. */
   --red-primary: #e10600;
   --red-glow: #ff1744;
   --red-deep: #8b0000;
@@ -18,6 +20,47 @@
   --text-secondary: #a1a1a1;
   --text-muted: #525252;
   --text-accent: #ff1744;
+
+  /* Generic accent aliases for new components (alias the live channels above
+     so they recolor with the mode). --accent-subtle carries its own alpha so
+     it's redefined per mode. */
+  --accent: var(--red-primary);
+  --accent-glow: var(--red-glow);
+  --accent-deep: var(--red-deep);
+  --accent-border: var(--border-accent);
+  --accent-text: var(--text-accent);
+  --accent-subtle: rgba(225, 6, 0, 0.1);
+  /* Pre-baked glow alphas for Tailwind arbitrary shadow utilities (a single
+     var reference avoids the nested commas color-mix() would introduce). */
+  --glow-a60: rgba(255, 23, 68, 0.6);
+  --glow-a40: rgba(255, 23, 68, 0.4);
+  --glow-a20: rgba(255, 23, 68, 0.2);
+}
+
+/* SWE theme — terminal green */
+[data-mode="swe"] {
+  --border-accent: #003300;
+  --red-primary: #39ff14;
+  --red-glow: #00ff41;
+  --red-deep: #003300;
+  --text-accent: #39ff14;
+  --accent-subtle: rgba(57, 255, 20, 0.08);
+  --glow-a60: rgba(0, 255, 65, 0.6);
+  --glow-a40: rgba(0, 255, 65, 0.4);
+  --glow-a20: rgba(0, 255, 65, 0.2);
+}
+
+/* Quant theme — amber/gold */
+[data-mode="quant"] {
+  --border-accent: #451a03;
+  --red-primary: #f59e0b;
+  --red-glow: #fbbf24;
+  --red-deep: #451a03;
+  --text-accent: #fbbf24;
+  --accent-subtle: rgba(245, 158, 11, 0.1);
+  --glow-a60: rgba(251, 191, 36, 0.6);
+  --glow-a40: rgba(251, 191, 36, 0.4);
+  --glow-a20: rgba(251, 191, 36, 0.2);
 }
 
 @theme inline {
@@ -84,6 +127,12 @@
     border: 1px solid var(--border-accent);
   }
 
+  /* Theme-aware hover for project / glass cards — recolors per mode. */
+  .card-hover:hover {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 20px var(--accent-subtle);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -102,8 +151,8 @@
 
   .grid-bg {
     background-image:
-      linear-gradient(to right, rgba(255, 23, 68, 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 23, 68, 0.04) 1px, transparent 1px);
+      linear-gradient(to right, color-mix(in srgb, var(--red-glow) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--red-glow) 4%, transparent) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 

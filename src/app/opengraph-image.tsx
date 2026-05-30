@@ -5,6 +5,8 @@ export const alt = "Kartheek Mukkavilli — Embedded Engineer, Trader, Violinist
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// intentional red: static social-card brand image, not theme-aware by design.
+
 export default async function Image() {
   return new ImageResponse(
     (

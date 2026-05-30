@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+// intentional red: brand easter-egg flash, fixed color.
+
 export function KonamiFlash() {
   return (
     <motion.div

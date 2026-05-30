@@ -57,7 +57,7 @@ export function F1Section({ id }: { id?: string }) {
       {/* Huge parallax "33" — Verstappen's old number */}
       <motion.div
         style={{ y: numberY }}
-        className="pointer-events-none absolute right-[-4vw] top-1/2 -translate-y-1/2 select-none font-mono font-bold leading-none text-red-primary/[0.07]"
+        className="pointer-events-none absolute right-[-4vw] top-1/2 -translate-y-1/2 select-none font-mono font-bold leading-none text-[#e10600]/[0.07]"
         aria-hidden
       >
         <span style={{ fontSize: "clamp(20rem, 55vw, 56rem)" }}>33</span>
@@ -78,7 +78,9 @@ export function F1Section({ id }: { id?: string }) {
             <div className="text-text-muted">{h.label}</div>
             <div
               className={`mt-1 text-base ${
-                h.glow ? "text-red-glow red-text-glow" : "text-text-primary"
+                h.glow
+                  ? "text-[#ff1744] [text-shadow:0_0_12px_rgba(255,23,68,0.6),0_0_32px_rgba(255,23,68,0.3)]"
+                  : "text-text-primary"
               }`}
             >
               {h.value}
@@ -97,7 +99,7 @@ export function F1Section({ id }: { id?: string }) {
           transition={{ duration: 1.1, ease }}
           className="max-w-[26ch]"
         >
-          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-red-glow">
+          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[#ff1744]">
             section · 01
           </span>
           <h2
@@ -105,7 +107,7 @@ export function F1Section({ id }: { id?: string }) {
             style={{ fontSize: "clamp(2.6rem, 6vw, 5rem)" }}
           >
             Sundays are for{" "}
-            <span className="bg-gradient-to-br from-red-primary via-red-glow to-amber-200 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-br from-[#e10600] via-[#ff1744] to-amber-200 bg-clip-text text-transparent">
               racing.
             </span>
           </h2>
@@ -114,7 +116,7 @@ export function F1Section({ id }: { id?: string }) {
           </p>
           <div className="mt-8 inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-text-muted">
             <span className="h-px w-8 bg-text-muted/60" />
-            try typing <span className="text-red-glow">verstappen</span>
+            try typing <span className="text-[#ff1744]">verstappen</span>
           </div>
         </motion.div>
       </div>

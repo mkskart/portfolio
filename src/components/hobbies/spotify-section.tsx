@@ -81,7 +81,7 @@ export function SpotifySection({ id }: { id?: string }) {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 30% 50%, rgba(139,0,0,0.12), transparent 60%)",
+            "radial-gradient(circle at 30% 50%, color-mix(in srgb, var(--accent-deep) 35%, transparent), transparent 60%)",
         }}
       />
 
@@ -202,7 +202,7 @@ function Vinyl({ albumImage, spinning }: { albumImage?: string; spinning: boolea
           background:
             "radial-gradient(circle at center, #181818 0%, #0a0a0a 65%, #050505 100%)",
           boxShadow:
-            "0 30px 60px -15px rgba(0,0,0,0.7), 0 0 80px -20px rgba(255,23,68,0.25), inset 0 0 0 1px rgba(255,255,255,0.04)",
+            "0 30px 60px -15px rgba(0,0,0,0.7), 0 0 80px -20px color-mix(in srgb, var(--accent-glow) 25%, transparent), inset 0 0 0 1px rgba(255,255,255,0.04)",
         }}
       />
       {/* Concentric grooves */}
@@ -232,7 +232,7 @@ function Vinyl({ albumImage, spinning }: { albumImage?: string; spinning: boolea
       </svg>
 
       {/* Center label with album art */}
-      <div className="absolute left-1/2 top-1/2 aspect-square w-[34%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border border-red-primary/30 bg-bg-elevated shadow-[0_0_24px_-6px_rgba(255,23,68,0.5)]">
+      <div className="absolute left-1/2 top-1/2 aspect-square w-[34%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border border-red-primary/30 bg-bg-elevated shadow-[0_0_24px_-6px_var(--glow-a40)]">
         {albumImage ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img src={albumImage} alt="album art" className="h-full w-full object-cover" />
@@ -241,7 +241,7 @@ function Vinyl({ albumImage, spinning }: { albumImage?: string; spinning: boolea
             className="h-full w-full"
             style={{
               background:
-                "radial-gradient(circle at 50% 50%, #8B0000 0%, #2A0808 60%, #0a0a0a 100%)",
+                "radial-gradient(circle at 50% 50%, var(--accent-deep) 0%, var(--accent-border) 60%, #0a0a0a 100%)",
             }}
           />
         )}

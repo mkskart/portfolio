@@ -94,12 +94,12 @@ export function EquityCurve({ height = 220, expandable = true, onExpand }: Props
       >
         <defs>
           <linearGradient id="eq-area" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FF1744" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#FF1744" stopOpacity="0" />
+            <stop offset="0%" style={{ stopColor: "var(--accent-glow)" }} stopOpacity="0.35" />
+            <stop offset="100%" style={{ stopColor: "var(--accent-glow)" }} stopOpacity="0" />
           </linearGradient>
           <linearGradient id="eq-line" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#8B0000" />
-            <stop offset="60%" stopColor="#FF1744" />
+            <stop offset="0%" style={{ stopColor: "var(--accent-deep)" }} />
+            <stop offset="60%" style={{ stopColor: "var(--accent-glow)" }} />
             <stop offset="100%" stopColor="#34d399" />
           </linearGradient>
         </defs>

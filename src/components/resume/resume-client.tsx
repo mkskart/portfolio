@@ -38,7 +38,7 @@ export function ResumeClient() {
   return (
     <div className="relative">
       {/* Top bar — back · mode toggle · download */}
-      <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between gap-3 px-4 py-4 md:px-6">
+      <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between gap-2 px-3 py-4 md:gap-3 md:px-6">
         <Link
           href="/"
           className="group inline-flex items-center gap-2 rounded-full border border-border-subtle bg-bg-elevated/80 px-3 py-1.5 text-xs text-text-secondary backdrop-blur transition-colors hover:border-red-glow hover:text-red-glow"
@@ -61,7 +61,7 @@ export function ResumeClient() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => setMode(m)}
-                className={`relative rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest transition-colors duration-200 md:px-4 md:text-xs ${
+                className={`relative rounded-full px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wide transition-colors duration-200 md:px-4 md:text-xs md:tracking-widest ${
                   active ? "text-white" : "text-text-muted hover:text-text-primary"
                 }`}
               >

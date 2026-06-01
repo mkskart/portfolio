@@ -76,7 +76,7 @@ export function SpotifyMiniPlayer() {
 
   return (
     <div
-      className="fixed left-4 top-4 z-40 w-[clamp(15rem,80vw,19rem)]"
+      className="fixed left-4 top-4 z-40 w-[13.5rem] md:w-[19rem]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

@@ -50,7 +50,7 @@ export default function TradingBotPage() {
             Back to portfolio
           </Link>
 
-          <span className="mt-8 inline-flex items-center gap-2 rounded-full border border-border-accent bg-red-primary/5 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-red-glow">
+          <span className="mt-4 flex w-fit items-center gap-2 rounded-full border border-border-accent bg-red-primary/5 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-red-glow md:mt-8 md:inline-flex">
             <span className="live-dot" />
             currently running
           </span>

@@ -23,7 +23,7 @@ function signed(val: number) {
 export function TelemetryOverlay({ telemetry, mode }: Props) {
   const { roll, pitch, yaw, throttle, alt, batt } = telemetry;
   return (
-    <div className="pointer-events-none absolute bottom-28 left-1/2 z-10 -translate-x-1/2">
+    <div className="pointer-events-none absolute bottom-44 left-1/2 z-10 -translate-x-1/2 md:bottom-28">
       <div className="rounded border border-border-subtle bg-black/60 px-4 py-3 font-mono text-xs backdrop-blur-sm md:px-6">
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
           <Stat label="ROLL" value={`${signed(roll)}°`} active={Math.abs(roll) > 2} />

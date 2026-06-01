@@ -1,65 +1,93 @@
 # kartheekkmukkavilli.com
 
-Personal portfolio. Black-and-red, motion-heavy, dual-audience flex piece for
-recruiters and engineers.
+My personal portfolio — a black-and-red, motion-heavy site that reframes itself
+for three different audiences. Built with Next.js and deployed on Vercel.
 
-**Stack:** Next.js 16 (App Router, TS) · Tailwind v4 · Framer Motion ·
-React Three Fiber · Vercel.
+**Live:** [kartheekkmukkavilli.com](https://kartheekkmukkavilli.com)
+
+---
+
+## What makes it different
+
+- **Three audience modes.** A single toggle reskins the whole site for
+  **Firmware**, **Quant**, or **SWE** readers — swapping the hero subtitle,
+  intro, skill groups, project ordering, experience framing, and the
+  downloadable resume. The active mode persists in the URL (`?mode=quant`) so a
+  link can deep-point a recruiter at the right framing.
+- **Interactive trading dashboard** (`/trading-bot`) — live-simulated equity
+  curves, backtest panels, and metrics rendered with Recharts.
+- **3D garage** (`/garage`) — a hidden gallery of `.glb` supercar models
+  rendered with React Three Fiber, reachable only through an easter egg.
+- **Live Spotify tile** — pulls now-playing and top tracks from the Spotify Web
+  API through serverless routes, and degrades gracefully to a quiet placeholder
+  when no credentials are configured.
+- **Built for accessibility** — full keyboard nav, skip-to-content,
+  JSON-LD `Person` structured data, and a global `prefers-reduced-motion` gate
+  that disables Three.js frameloops and CSS transitions.
+
+## Tech stack
+
+| Layer       | Tools                                                              |
+|-------------|-------------------------------------------------------------------|
+| Framework   | Next.js 16 (App Router) · React 19 · TypeScript                   |
+| Styling     | Tailwind CSS v4 (CSS-variable theme tokens)                       |
+| Motion      | Framer Motion                                                     |
+| 3D          | React Three Fiber · drei · three                                  |
+| Data viz    | Recharts                                                          |
+| Data        | SWR · Spotify Web API (serverless routes)                         |
+| Fonts       | Space Grotesk (display) · Inter (sans) · JetBrains Mono (mono)    |
+| Hosting     | Vercel                                                            |
 
 ## Routes
 
-| Path           | Notes                                                       |
-|----------------|-------------------------------------------------------------|
-| `/`            | Hero, intro, trading bot, LiteWing, work, hobbies, contact  |
-| `/trading-bot` | Deep dive — live simulated dashboard, backtest panels       |
-| `/resume`      | Animated resume + PDF download                              |
-| `/garage`      | Hidden — accessible only via tile-B easter egg              |
+| Path           | Notes                                                          |
+|----------------|----------------------------------------------------------------|
+| `/`            | Home — hero, intro, featured projects, experience, hobbies, contact |
+| `/trading-bot` | QuantClaw deep dive — simulated dashboard and backtest panels  |
+| `/litewing`    | LiteWing flight-controller deep dive                          |
+| `/resume`      | Animated resume with a per-mode PDF download                  |
+| `/garage`      | Hidden 3D car gallery (reachable via an easter egg)          |
+| `/api/spotify/now-playing`, `/api/spotify/top-tracks` | Serverless Spotify proxies |
 
-## Local dev
+## Getting started
+
+Requires **Node 20+** and **npm 10+**.
 
 ```sh
 npm install
-npm run dev          # http://localhost:3000
-npm run build        # production build
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm run start    # serve the production build
 npm run lint
 ```
 
-Node 20+, npm 10+.
+## Environment variables
 
-## Easter eggs
+Everything renders without any env vars — the Spotify tile simply shows a quiet
+placeholder until credentials are present. To light it up, create a
+`.env.local` in the project root (and add the same keys in Vercel under
+**Project Settings → Environment Variables**):
 
-| # | Trigger                                | Effect                                       |
-|---|----------------------------------------|----------------------------------------------|
-| 1 | Konami code (↑↑↓↓←→←→BA)               | Site flashes red with "DRS ENABLED"          |
-| 2 | Click the equity curve                 | Fullscreen scrubable modal                   |
-| 3 | Type `verstappen` anywhere             | Site-wide MAX VERSTAPPEN broadcast flash     |
-| 4 | Click name 5×                          | Name shatters and reforms                    |
-| 5 | Long-press violin tile (800ms)         | Plays a synthesized violin note (Web Audio)  |
-| 6 | Type `litewing` anywhere               | Viewport tilts ±2.5° for 2s (matches spec)   |
-| 7 | Click the cars tile silhouette 3×      | Reveals hidden link to `/garage`             |
+```sh
+SPOTIFY_CLIENT_ID=...
+SPOTIFY_CLIENT_SECRET=...
+SPOTIFY_REFRESH_TOKEN=...
+```
 
-Keyboard-driven eggs (1, 3, 6) are desktop-only by nature.
+<details>
+<summary>One-time Spotify refresh-token exchange</summary>
 
-## Spotify setup
-
-The "Off the Clock" Spotify tile pulls live data from the Spotify Web API via
-two serverless routes (`/api/spotify/now-playing`, `/api/spotify/top-tracks`).
-Without env vars set, it gracefully shows "Nothing live right now" — no errors,
-no broken UI.
-
-### One-time refresh-token exchange
-
-1. Go to <https://developer.spotify.com/dashboard> and create an app.
+1. Create an app at <https://developer.spotify.com/dashboard>.
 2. Add `http://localhost:3000/callback` as a redirect URI.
 3. Copy the **Client ID** and **Client Secret**.
-4. Visit (replace `<CLIENT_ID>`):
+4. Visit (substituting `<CLIENT_ID>`), approve, then grab the `code` query param
+   from the redirect URL:
 
    ```
    https://accounts.spotify.com/authorize?response_type=code&client_id=<CLIENT_ID>&scope=user-read-currently-playing%20user-top-read&redirect_uri=http://localhost:3000/callback
    ```
 
-   Approve, then copy the `code` param from the URL you're redirected to.
-5. Exchange the code for a refresh token (replace placeholders):
+5. Exchange the code for a refresh token:
 
    ```sh
    curl -X POST https://accounts.spotify.com/api/token \
@@ -69,54 +97,59 @@ no broken UI.
      -d "redirect_uri=http://localhost:3000/callback"
    ```
 
-6. Save the `refresh_token` from the response.
+6. Save the `refresh_token` from the response. The refresh token never leaves
+   the server — it is only used inside the serverless routes.
+</details>
 
-### Wire env vars
+## Resume PDFs
 
-Local dev — copy `.env.example` to `.env.local` and fill in.
-Vercel — add the same keys in **Project Settings → Environment Variables**:
+Each mode links to its own resume, served from `public/`:
 
-- `SPOTIFY_CLIENT_ID`
-- `SPOTIFY_CLIENT_SECRET`
-- `SPOTIFY_REFRESH_TOKEN`
+- `kartheek-mukkavilli-resume-firmware.pdf`
+- `kartheek-mukkavilli-resume-quant.pdf`
+- `kartheek-mukkavilli-resume-swe.pdf`
 
-Refresh tokens stay private on the server — they are never sent to the client.
+Replace these files to update the downloads — no code changes needed.
 
-## Resume PDF
+## Project structure
 
-Drop the actual PDF at `public/kartheek-mukkavilli-resume.pdf` — the
-"Download PDF" button on `/resume` links to that path.
+```
+src/
+  app/            # App Router: pages, layout, and /api/spotify routes
+  components/     # UI by area — hero, trading, litewing, garage, hobbies, easter-eggs
+  lib/            # mode system, motion presets, project data, Spotify + theme helpers
+public/           # resume PDFs, 3D .glb models, audio/video, images
+```
 
-## Deploy
+The mode system lives in `src/lib/mode.ts` (types + URL persistence) and
+`src/lib/mode-content.ts` (the per-mode copy), with project metadata in
+`src/lib/projects-data.ts`.
 
-Push to GitHub → connect to Vercel → done.
+## Design tokens
 
-For the custom domain `kartheekkmukkavilli.com`:
+Colors, typography, and effects are CSS variables in `src/app/globals.css`,
+registered as Tailwind v4 theme tokens and used as utilities — e.g.
+`bg-bg-base`, `glass`, `text-red-glow`, `font-display`, `red-glow`. Animation
+defaults live in `src/lib/motion.ts`, and the reduced-motion gate in
+`src/lib/reduced-motion.ts`.
 
-1. Vercel → Project → Settings → Domains → add the domain.
-2. In your DNS host (GoDaddy etc.), add the A / CNAME records Vercel shows.
+## Easter eggs
 
-## Design system reference
+A few hidden bits, because why not:
 
-Colors and typography are CSS variables in `src/app/globals.css`,
-registered as Tailwind v4 theme tokens. Use them as utilities:
+- **Konami code** (↑↑↓↓←→←→BA) → a site-wide red flash.
+- Type **`verstappen`** anywhere → an audio cue.
+- Type **`litewing`** anywhere → the viewport briefly banks ±2.5°.
+- Plus a handful of tile-local surprises — including the secret door to
+  `/garage`. Go find them.
 
-- Surfaces: `bg-bg-base`, `bg-bg-elevated`, `glass`, `glass-red`
-- Reds:     `text-red-glow`, `bg-red-primary`, `border-border-accent`
-- Text:     `text-text-primary`, `text-text-secondary`, `text-text-muted`
-- Fonts:    `font-display` (Space Grotesk), `font-mono` (JetBrains Mono),
-            default sans (Inter)
-- Effects:  `red-glow`, `red-text-glow`, `live-dot`
+## Deployment
 
-Animation defaults (see `src/lib/motion.ts`):
+Push to GitHub and connect the repo to Vercel. For the custom domain, add it
+under **Settings → Domains** and point the A/CNAME records Vercel provides at
+your DNS host.
 
-- Cinematic reveals: `duration: 0.95s`, ease `[0.22, 1, 0.36, 1]`
-- Snappy interactions: `duration: 0.18s`
-- Reduced motion: `prefers-reduced-motion` gates Three.js frameloops and CSS
-  transitions globally (`src/lib/reduced-motion.ts` + `globals.css`).
+---
 
-## Trading bot data
-
-All numbers and charts on `/trading-bot` and the homepage are
-**client-side simulated**. No real trading data, no API keys, nothing
-connected to live markets. This is intentional and non-negotiable.
+> **Note:** All numbers and charts on `/trading-bot` and the homepage are
+> client-side simulations. Nothing here is wired to live markets or real money.

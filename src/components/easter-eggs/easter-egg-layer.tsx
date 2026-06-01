@@ -55,10 +55,14 @@ export function EasterEggLayer() {
       )
         return;
 
-      // Konami — match arrow keys exactly, letters case-insensitively
+      // Konami — match arrow keys exactly, letters case-insensitively.
+      // KONAMI letters are already lowercase and `k` lowercases single chars,
+      // while arrow names ("ArrowUp") keep their casing on both sides — so
+      // compare directly without lowercasing `expected` (doing so would turn
+      // "ArrowUp" into "arrowup" and never match the arrow keys).
       const expected = KONAMI[konamiIdx];
       const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-      if (k === expected.toLowerCase()) {
+      if (k === expected) {
         konamiIdx += 1;
         if (konamiIdx === KONAMI.length) {
           konamiIdx = 0;
@@ -66,7 +70,7 @@ export function EasterEggLayer() {
         }
       } else {
         // Allow re-starting if the wrong key happens to be the first key of the sequence
-        konamiIdx = k === KONAMI[0].toLowerCase() ? 1 : 0;
+        konamiIdx = k === KONAMI[0] ? 1 : 0;
       }
 
       if (e.key.length === 1) {

@@ -5,6 +5,7 @@ import { FeaturedSections } from "@/components/featured-sections";
 import { OtherWork } from "@/components/other-work";
 import { HobbiesStack } from "@/components/hobbies/hobbies-stack";
 import { Contact } from "@/components/contact";
+import { SpotifyMiniPlayer } from "@/components/spotify-mini-player";
 
 const MODE_DESCRIPTIONS: Record<string, string> = {
   firmware:
@@ -40,6 +41,7 @@ export default function HomePage() {
       <OtherWork />
       <HobbiesStack />
       <Contact />
+      <SpotifyMiniPlayer />
     </>
   );
 }

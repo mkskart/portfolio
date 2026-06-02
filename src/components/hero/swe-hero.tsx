@@ -58,18 +58,25 @@ function DissolveCanvas({ onComplete }: { onComplete: () => void }) {
     canvas.width = Math.max(1, w * dpr);
     canvas.height = Math.max(1, h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.font = `${FONT_PX}px ${MONO}`;
+
+    // Match the responsive DOM terminal: smaller font / tighter padding on
+    // mobile (text-[10px]/leading-[18px]/px-4) so the dissolve doesn't jump.
+    const isMobile = w < 768;
+    const fontPx = isMobile ? 10 : FONT_PX;
+    const lineH = isMobile ? 18 : LINE_H;
+    const padX = isMobile ? 16 : 32;
+    ctx.font = `${fontPx}px ${MONO}`;
     ctx.textBaseline = "alphabetic";
 
     const accent = getAccent();
     const glow = getAccentGlow();
-    const charW = ctx.measureText("M").width || 8.4;
+    const charW = ctx.measureText("M").width || (isMobile ? 6 : 8.4);
 
-    // Mirror the DOM terminal layout: centered max-w-2xl (672) block, px-8.
+    // Mirror the DOM terminal layout: centered max-w-2xl (672) block.
     const blockW = Math.min(672, w);
-    const textLeft = (w - blockW) / 2 + 32;
+    const textLeft = (w - blockW) / 2 + padX;
     const numLines = TERMINAL_LINES.length;
-    const textTop = (h - numLines * LINE_H) / 2;
+    const textTop = (h - numLines * lineH) / 2;
 
     const chars: FallingChar[] = [];
     TERMINAL_LINES.forEach((line, li) => {
@@ -79,7 +86,7 @@ function DissolveCanvas({ onComplete }: { onComplete: () => void }) {
         chars.push({
           ch: full[ci],
           x: textLeft + ci * charW,
-          y: textTop + li * LINE_H + FONT_PX,
+          y: textTop + li * lineH + fontPx,
           vy: 0,
           opacity: 1,
           phase: 0,

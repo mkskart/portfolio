@@ -15,7 +15,7 @@ export function TradingSection() {
       aria-labelledby="trading-bot-title"
     >
       <div className="mx-auto max-w-[1400px]">
-        <div className="grid items-center gap-14 md:grid-cols-2 md:gap-16">
+        <div className="grid grid-cols-1 items-center gap-14 md:grid-cols-2 md:gap-16">
           {/* Left text */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -86,6 +86,7 @@ export function TradingSection() {
 
           {/* Right dashboard */}
           <motion.div
+            className="min-w-0"
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-10% 0px" }}

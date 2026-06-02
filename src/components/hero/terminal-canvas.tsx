@@ -101,13 +101,13 @@ export function TerminalCanvas() {
       {/* Terminal body */}
       <div
         ref={containerRef}
-        className="relative mx-auto max-h-[70vh] w-full max-w-2xl overflow-hidden px-8"
+        className="relative mx-auto max-h-[70vh] w-full max-w-2xl overflow-hidden px-4 md:px-8"
         style={{ opacity: 0.7 }}
       >
         {visibleLines.map((line, idx) => (
           <div
             key={idx}
-            className="whitespace-pre font-mono text-sm leading-7"
+            className="whitespace-pre font-mono text-[10px] leading-[18px] md:text-sm md:leading-7"
             style={{
               color: line.output
                 ? line.final
@@ -128,7 +128,7 @@ export function TerminalCanvas() {
 
         {/* Persistent prompt + cursor once the transcript finishes */}
         {done && (
-          <div className="font-mono text-sm leading-7" style={{ color: "var(--accent)" }}>
+          <div className="font-mono text-[10px] leading-[18px] md:text-sm md:leading-7" style={{ color: "var(--accent)" }}>
             <span style={{ color: "color-mix(in srgb, var(--accent) 45%, transparent)" }}>
               kartheek@portfolio:~${" "}
             </span>
@@ -139,13 +139,13 @@ export function TerminalCanvas() {
 
       {/* Terminal-frame corner decorations */}
       <div
-        className="absolute left-8 top-8 font-mono text-xs opacity-20"
+        className="absolute left-4 top-4 font-mono text-xs opacity-20 md:left-8 md:top-8"
         style={{ color: "var(--accent)" }}
       >
         bash 5.2.15
       </div>
       <div
-        className="absolute right-8 top-8 font-mono text-xs opacity-20"
+        className="absolute right-4 top-4 font-mono text-xs opacity-20 md:right-8 md:top-8"
         style={{ color: "var(--accent)" }}
       >
         80×24

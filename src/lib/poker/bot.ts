@@ -1,206 +1,124 @@
-// ──────────────────────────────────────────────
-// Bot AI — three difficulty levels
-// ──────────────────────────────────────────────
+// Bot decision logic. Uses a fast hand-strength heuristic: Chen-style preflop
+// scoring, and post-flop made-hand category scaled to [0,1]. Each bot has
+// aggression & tightness so they don't all play identically. Returns the action
+// the bot wants to take; the caller applies it (after a thinking delay).
 
-import { GameState, Player, BotDifficulty, Card } from './types';
-import { evaluateHand } from './hand-evaluator';
-import { rankToValue } from './deck';
-import { PlayerAction, getCallAmount, canCheck } from './game-engine';
+import { getConstraints } from "./engine";
+import { evaluate7, HandRank } from "./hand-evaluator";
+import type { BotProfile, Card, GameState, PlayerAction } from "./types";
+import { RAISE_INCREMENT } from "./engine";
 
-// ── Hand strength estimation ──────────────────────
-
-function handStrengthScore(holeCards: Card[], communityCards: Card[]): number {
-  if (holeCards.length === 0) return 0;
-  const ev = evaluateHand(holeCards, communityCards);
-  // Normalize rankIndex (0-9) to 0-1, plus small bonus for high cards in tiebreakers
-  const base = ev.rankIndex / 9;
-  const tiebreakerBonus = (ev.tiebreakers[0] ?? 0) / 14 * 0.05;
-  return Math.min(1, base + tiebreakerBonus);
-}
-
-// Rough preflop hand strength (0-1)
-function preflopStrength(holeCards: Card[]): number {
-  if (holeCards.length < 2) return 0;
-  const [c1, c2] = holeCards;
-  const v1 = rankToValue(c1.rank);
-  const v2 = rankToValue(c2.rank);
-  const high = Math.max(v1, v2);
-  const low = Math.min(v1, v2);
-  const suited = c1.suit === c2.suit ? 0.05 : 0;
-  const pair = v1 === v2;
-  if (pair) return 0.4 + (high / 14) * 0.4;
-  const gap = high - low;
-  const base = (high / 14) * 0.3 + (low / 14) * 0.2;
-  const gapPenalty = (gap / 12) * 0.1;
-  return Math.min(1, base + suited - gapPenalty);
-}
-
-function getHandStrength(state: GameState, player: Player): number {
-  if (state.communityCards.length === 0) {
-    return preflopStrength(player.holeCards);
+// Chen formula preflop hand strength, roughly 0..20 -> normalized to ~0..1.
+function chenScore(hole: Card[]): number {
+  const [a, b] = hole;
+  const hi = Math.max(a.rank, b.rank);
+  const lo = Math.min(a.rank, b.rank);
+  const pointFor = (r: number): number => {
+    if (r === 14) return 10;
+    if (r === 13) return 8;
+    if (r === 12) return 7;
+    if (r === 11) return 6;
+    return r / 2;
+  };
+  let score = pointFor(hi);
+  if (hi === lo) {
+    // pair
+    score = Math.max(5, pointFor(hi) * 2);
   }
-  return handStrengthScore(player.holeCards, state.communityCards);
+  const suited = a.suit === b.suit;
+  if (suited) score += 2;
+  const gap = hi - lo - 1;
+  if (hi !== lo) {
+    if (gap === 1) score -= 1;
+    else if (gap === 2) score -= 2;
+    else if (gap === 3) score -= 4;
+    else if (gap >= 4) score -= 5;
+    // straight bonus for low connectors
+    if (gap <= 1 && hi < 12) score += 1;
+  }
+  return Math.max(0, Math.min(1, score / 20));
 }
 
-// ── Pot odds ──────────────────────────────────────
-
-function getPotOdds(state: GameState, player: Player): number {
-  const callAmount = getCallAmount(state, player.id);
-  if (callAmount === 0) return 1;
-  return state.pot / (state.pot + callAmount);
+// Post-flop strength based on made-hand category (0..1).
+function madeStrength(hole: Card[], board: Card[]): number {
+  const ev = evaluate7([...hole, ...board]);
+  // Map category to a base; add a little for high tiebreaker.
+  const base: Record<number, number> = {
+    [HandRank.HighCard]: 0.12,
+    [HandRank.Pair]: 0.32,
+    [HandRank.TwoPair]: 0.5,
+    [HandRank.ThreeOfAKind]: 0.62,
+    [HandRank.Straight]: 0.74,
+    [HandRank.Flush]: 0.82,
+    [HandRank.FullHouse]: 0.9,
+    [HandRank.FourOfAKind]: 0.97,
+    [HandRank.StraightFlush]: 0.99,
+    [HandRank.RoyalFlush]: 1,
+  };
+  let s = base[ev.rank] ?? 0.12;
+  // nudge by top tiebreaker (e.g. high pair beats low pair)
+  s += ((ev.tiebreakers[0] ?? 0) / 14) * 0.06;
+  return Math.min(1, s);
 }
 
-// ── Bot decision ──────────────────────────────────
+function handStrength(state: GameState, seat: number): number {
+  const p = state.players[seat];
+  if (state.community.length === 0) return chenScore(p.holeCards);
+  return madeStrength(p.holeCards, state.community);
+}
 
-export function getBotAction(state: GameState, player: Player): PlayerAction {
-  const difficulty = player.botDifficulty ?? 'easy';
-  const strength = getHandStrength(state, player);
-  const potOdds = getPotOdds(state, player);
-  const callAmount = getCallAmount(state, player.id);
-  const isCheck = canCheck(state, player.id);
+// Decide the bot's action.
+export function decideBotAction(state: GameState, seat: number): PlayerAction {
+  const p = state.players[seat];
+  const profile: BotProfile = p.bot ?? { aggression: 0.5, tightness: 0.5 };
+  const c = getConstraints(state, seat);
+
+  const strength = handStrength(state, seat);
+  const potOdds = (() => {
+    const callable = c.callAmount;
+    if (callable <= 0) return 0;
+    const pot = state.pot + state.players.reduce((s, pl) => s + pl.committed, 0);
+    return callable / (pot + callable);
+  })();
+
+  // Tighter bots require more strength to continue; aggressive bots raise more.
+  const callThreshold = 0.18 + profile.tightness * 0.22; // ~0.18..0.40
+  const raiseThreshold = 0.5 + (1 - profile.aggression) * 0.28; // ~0.5..0.78
+
   const rand = Math.random();
+  // Occasional small bluff when checked to (no bet to call).
+  const bluffing = c.canCheck && rand < 0.08 * profile.aggression && c.canRaise;
 
-  switch (difficulty) {
-    case 'easy':
-      return easyBot(strength, potOdds, callAmount, isCheck, player, state, rand);
-    case 'medium':
-      return mediumBot(strength, potOdds, callAmount, isCheck, player, state, rand);
-    case 'hard':
-      return hardBot(strength, potOdds, callAmount, isCheck, player, state, rand);
+  const wantsRaise = strength >= raiseThreshold || bluffing;
+  const wantsContinue =
+    strength >= callThreshold + potOdds * 0.5 || (c.canCheck && strength >= 0.05);
+
+  if (wantsRaise && c.canRaise) {
+    // size the raise relative to the pot and strength
+    const pot = Math.max(state.bigBlind, state.pot + state.players.reduce((s, pl) => s + pl.committed, 0));
+    const baseFactor = 0.45 + profile.aggression * 0.55 + (bluffing ? 0 : strength * 0.3);
+    let target = state.currentBet + Math.round((pot * baseFactor) / RAISE_INCREMENT) * RAISE_INCREMENT;
+    target = Math.max(c.minRaiseTo, Math.min(target, c.maxRaiseTo));
+    // Shove with monster hands sometimes.
+    if (strength > 0.92 && rand < 0.5) target = c.maxRaiseTo;
+    if (target >= c.maxRaiseTo) return { type: "allin" };
+    return { type: "raise", amount: target };
   }
+
+  if (c.canCheck) {
+    return { type: "check" };
+  }
+
+  if (wantsContinue) {
+    // If a call would commit our whole stack, that's an all-in call.
+    if (c.callAmount >= p.stack) return { type: "allin" };
+    return { type: "call" };
+  }
+
+  return { type: "fold" };
 }
 
-function easyBot(
-  strength: number,
-  potOdds: number,
-  callAmount: number,
-  isCheck: boolean,
-  player: Player,
-  state: GameState,
-  rand: number,
-): PlayerAction {
-  // Easy: calls too often, rarely raises, folds to big bets
-  if (isCheck) {
-    // Check or occasionally bet small
-    if (rand < 0.15 && strength > 0.4) {
-      const bet = Math.min(Math.floor(state.pot * 0.5), player.chips);
-      return { type: 'raise', amount: player.currentBet + bet };
-    }
-    return { type: 'check' };
-  }
-
-  // Big bet — sometimes fold
-  const relativeCallSize = callAmount / (state.pot + callAmount);
-  if (relativeCallSize > 0.5 && strength < 0.25 && rand < 0.5) {
-    return { type: 'fold' };
-  }
-
-  // Usually call
-  if (rand < 0.75 || strength > 0.3) {
-    if (callAmount >= player.chips) return { type: 'all-in' };
-    return { type: 'call' };
-  }
-
-  return { type: 'fold' };
-}
-
-function mediumBot(
-  strength: number,
-  potOdds: number,
-  callAmount: number,
-  isCheck: boolean,
-  player: Player,
-  state: GameState,
-  rand: number,
-): PlayerAction {
-  // Medium: considers pot odds, bets made hands, folds weak hands
-  if (isCheck) {
-    if (strength > 0.55 && rand < 0.7) {
-      const bet = Math.floor(state.pot * 0.6);
-      const total = player.currentBet + Math.min(bet, player.chips);
-      return { type: 'raise', amount: total };
-    }
-    if (strength > 0.35 && rand < 0.3) {
-      const bet = Math.floor(state.pot * 0.33);
-      const total = player.currentBet + Math.min(bet, player.chips);
-      return { type: 'raise', amount: total };
-    }
-    return { type: 'check' };
-  }
-
-  // Use pot odds
-  if (strength > potOdds + 0.1) {
-    // Raise if strong
-    if (strength > 0.6 && rand < 0.5) {
-      const raise = Math.floor(state.currentBet * 2.5);
-      if (raise < player.chips) return { type: 'raise', amount: player.currentBet + (raise - state.currentBet) + (state.currentBet - player.currentBet) };
-    }
-    if (callAmount >= player.chips) return { type: 'all-in' };
-    return { type: 'call' };
-  }
-
-  if (strength > potOdds - 0.05) {
-    if (callAmount >= player.chips) return { type: 'all-in' };
-    return { type: 'call' };
-  }
-
-  return { type: 'fold' };
-}
-
-function hardBot(
-  strength: number,
-  potOdds: number,
-  callAmount: number,
-  isCheck: boolean,
-  player: Player,
-  state: GameState,
-  rand: number,
-): PlayerAction {
-  // Hard: GTO-ish, bluffs, 3-bets strong hands, position-aware
-  const isBluff = rand < 0.12 && strength < 0.2;
-  const isPositionAdvantage = rand < 0.3; // rough position heuristic
-
-  if (isCheck) {
-    // Value bet or bluff
-    if (strength > 0.65 || (isBluff && rand < 0.3)) {
-      const fraction = strength > 0.75 ? 0.75 : strength > 0.5 ? 0.5 : 0.33;
-      const bet = Math.min(Math.floor(state.pot * fraction), player.chips);
-      if (bet > 0) return { type: 'raise', amount: player.currentBet + bet };
-    }
-    if (strength > 0.4 && isPositionAdvantage && rand < 0.4) {
-      const bet = Math.min(Math.floor(state.pot * 0.4), player.chips);
-      if (bet > 0) return { type: 'raise', amount: player.currentBet + bet };
-    }
-    return { type: 'check' };
-  }
-
-  // 3-bet with strong hands
-  if (strength > 0.7 && rand < 0.6) {
-    const threeBet = Math.min(state.currentBet * 3, player.chips + player.currentBet);
-    if (threeBet > player.currentBet + state.bigBlind) {
-      return { type: 'raise', amount: threeBet };
-    }
-  }
-
-  // Bluff raise
-  if (isBluff && rand < 0.2) {
-    const bluffRaise = Math.min(state.currentBet * 2.5, player.chips + player.currentBet);
-    if (bluffRaise > player.currentBet + state.bigBlind) {
-      return { type: 'raise', amount: Math.floor(bluffRaise) };
-    }
-  }
-
-  // Call with pot odds
-  if (strength > potOdds - 0.05 || (isBluff && callAmount < state.pot * 0.3)) {
-    if (callAmount >= player.chips) return { type: 'all-in' };
-    return { type: 'call' };
-  }
-
-  return { type: 'fold' };
-}
-
-// ── Bot delay ─────────────────────────────────────
-
-export function getBotDelay(): number {
-  return 800 + Math.floor(Math.random() * 700); // 800–1500ms
+// Randomized "thinking" delay in ms (0.8s..1.2s).
+export function botThinkDelay(): number {
+  return 800 + Math.random() * 400;
 }

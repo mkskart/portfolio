@@ -1,148 +1,97 @@
-// ──────────────────────────────────────────────
-// Core poker types for Texas Hold'em
-// ──────────────────────────────────────────────
+// Core domain types for the solo Texas Hold'em engine.
+// Kept UI-agnostic and serializable so multiplayer could layer on later.
 
-export type Suit = '♠' | '♥' | '♦' | '♣';
-export type Rank = '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K' | 'A';
+export type Suit = "s" | "h" | "d" | "c";
+
+// Ranks 2..14 where 11=J,12=Q,13=K,14=A
+export type Rank = number;
 
 export interface Card {
-  rank: Rank;
+  rank: Rank; // 2..14
   suit: Suit;
-  id: string; // e.g. "A♠"
 }
 
-export type Phase = 'waiting' | 'preflop' | 'flop' | 'turn' | 'river' | 'showdown';
+export type GamePhase =
+  | "idle"
+  | "preflop"
+  | "flop"
+  | "turn"
+  | "river"
+  | "showdown"
+  | "handover";
 
-export type PlayerStatus = 'active' | 'folded' | 'all-in' | 'sitting-out';
+export type ActionType = "fold" | "check" | "call" | "raise" | "allin";
 
-export type BotDifficulty = 'easy' | 'medium' | 'hard';
+export interface PlayerAction {
+  type: ActionType;
+  amount?: number; // for raise: the TOTAL bet the player is raising TO this street
+}
+
+export interface BotProfile {
+  aggression: number; // 0..1
+  tightness: number; // 0..1
+}
 
 export interface Player {
-  id: string;
+  seat: number; // 0..7
   name: string;
-  avatarColor: string;
-  chips: number;
-  holeCards: Card[];
-  currentBet: number;
-  totalBetThisHand: number;
-  status: PlayerStatus;
+  color: string; // avatar accent
   isBot: boolean;
-  botDifficulty?: BotDifficulty;
+  stack: number;
+  buyIn: number; // total chips bought in (for ledger P&L)
+  // round/hand bookkeeping
+  holeCards: Card[];
+  committed: number; // chips put into pot THIS street
+  totalCommitted: number; // chips put into pot THIS hand (for side pots)
+  folded: boolean;
+  allIn: boolean;
+  busted: boolean;
   hasActedThisRound: boolean;
-  isConnected: boolean;
+  bot?: BotProfile;
 }
 
-export interface SidePot {
+export interface Pot {
   amount: number;
-  eligiblePlayerIds: string[];
+  // seats eligible to win this pot
+  eligible: number[];
 }
 
-export interface LedgerEntry {
-  handNumber: number;
-  playerId: string;
-  playerName: string;
-  buyIn: number;
-  rebuy: number;
-  potWon: number;
-}
-
-export interface ChatMessage {
-  id: string;
-  playerId: string;
-  playerName: string;
-  avatarColor: string;
-  text: string;
-  timestamp: number;
-  isEmoji?: boolean;
-}
-
-export interface EmojiReaction {
-  id: string;
-  playerId: string;
-  emoji: string;
-  timestamp: number;
-}
-
-export interface HandResult {
-  handNumber: number;
-  winners: { playerId: string; playerName: string; amount: number; handDescription: string }[];
-}
-
-export interface RunItVote {
-  times: number; // 2 or 3
-  votes: Record<string, boolean>; // playerId -> voted yes
-  threshold: number; // how many yes votes needed
+// Result of a showdown for animation/labeling
+export interface ShowdownResult {
+  // winners per pot: parallel to pots, each entry a list of winning seats
+  potWinners: { potIndex: number; seats: number[]; amount: number; handName: string }[];
+  // best hand name per contesting seat for reveal labels
+  handNames: Record<number, string>;
 }
 
 export interface GameState {
-  phase: Phase;
   players: Player[];
   deck: Card[];
-  communityCards: Card[];
-  pot: number;
-  sidePots: SidePot[];
-  currentBet: number;
-  currentPlayerIndex: number;
-  dealerIndex: number;
-  smallBlindIndex: number;
-  bigBlindIndex: number;
-  handNumber: number;
+  community: Card[];
+  phase: GamePhase;
+  dealer: number; // seat index of dealer button
   smallBlind: number;
   bigBlind: number;
-  startingStack: number;
-  ledger: LedgerEntry[];
-  lastHandResult: HandResult | null;
-  runItVote: RunItVote | null;
-  chatMessages: ChatMessage[];
-  emojiReactions: EmojiReaction[];
-  minRaise: number;
-  lastRaiseAmount: number;
-  actionsThisRound: number;
+  pots: Pot[]; // side pots (built from committed chips)
+  pot: number; // total of all pots (convenience for display)
+  // betting state for current street
+  currentBet: number; // highest committed amount this street
+  minRaise: number; // minimum raise increment currently
+  toAct: number; // seat index whose turn it is (-1 if none)
+  lastAggressor: number; // seat who made the last aggressive action (-1 none)
+  handNumber: number;
+  log: string[];
+  showdown: ShowdownResult | null;
+  winningSeats: number[]; // for highlight
 }
 
-// ──────────────────────────────────────────────
-// Hand evaluation types
-// ──────────────────────────────────────────────
-
-export type HandRank =
-  | 'Royal Flush'
-  | 'Straight Flush'
-  | 'Four of a Kind'
-  | 'Full House'
-  | 'Flush'
-  | 'Straight'
-  | 'Three of a Kind'
-  | 'Two Pair'
-  | 'One Pair'
-  | 'High Card';
-
-export interface HandEvaluation {
-  rank: HandRank;
-  rankIndex: number; // 9 (royal flush) → 0 (high card)
-  bestCards: Card[];
-  description: string;
-  tiebreakers: number[]; // for comparing equal ranks
-}
-
-// ──────────────────────────────────────────────
-// Network message types (PartyKit)
-// ──────────────────────────────────────────────
-
-export type ClientMessage =
-  | { type: 'join'; name: string; avatarColor: string }
-  | { type: 'start'; startingStack: number; smallBlind: number; bigBlind: number }
-  | { type: 'action'; action: 'fold' | 'check' | 'call' | 'raise' | 'all-in'; amount?: number }
-  | { type: 'rebuy'; amount: number }
-  | { type: 'vote_run'; times: number }
-  | { type: 'chat'; text: string }
-  | { type: 'emoji'; emoji: string };
-
-export type ServerMessage =
-  | { type: 'state'; state: GameState }
-  | { type: 'error'; message: string }
-  | { type: 'room_info'; roomCode: string; hostId: string };
-
-export interface RoomInfo {
-  roomCode: string;
-  hostId: string;
+export interface LedgerRow {
+  seat: number;
+  name: string;
+  color: string;
+  buyIn: number;
+  stack: number;
+  net: number;
+  busted: boolean;
+  isBot: boolean;
 }

@@ -1,68 +1,92 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card as CardType } from "@/lib/poker/types";
+import type { Card as CardType } from "@/lib/poker/types";
+import { RANK_LABELS, SUIT_COLORS, SUIT_SYMBOLS } from "@/lib/poker/deck";
+import { cn } from "@/lib/cn";
 
 interface CardProps {
-  card?: CardType;
+  card?: CardType | null;
   faceDown?: boolean;
-  small?: boolean;
-  highlight?: boolean;
-  delay?: number;
+  size?: "sm" | "md" | "lg";
   className?: string;
+  dim?: boolean;
 }
 
-const SUIT_COLORS: Record<string, string> = {
-  "♠": "text-slate-300",
-  "♥": "text-red-500",
-  "♦": "text-sky-400",
-  "♣": "text-emerald-400",
+const SIZES = {
+  sm: { w: "w-9", h: "h-13", corner: "text-[10px]", center: "text-xl", pad: "p-1" },
+  md: { w: "w-12", h: "h-[4.5rem]", corner: "text-xs", center: "text-2xl", pad: "p-1.5" },
+  lg: { w: "w-16", h: "h-24", corner: "text-sm", center: "text-4xl", pad: "p-2" },
 };
 
-export function Card({ card, faceDown = false, small = false, highlight = false, delay = 0, className = "" }: CardProps) {
-  const sizeClass = small ? "w-8 h-12" : "w-14 h-20";
-  const textSize = small ? "text-xs" : "text-base";
-  const centerSize = small ? "text-lg" : "text-3xl";
+export function PlayingCard({
+  card,
+  faceDown,
+  size = "md",
+  className,
+  dim,
+}: CardProps) {
+  const s = SIZES[size];
 
   if (faceDown || !card) {
     return (
-      <motion.div
-        initial={{ scale: 0, rotate: -10, opacity: 0 }}
-        animate={{ scale: 1, rotate: 0, opacity: 1 }}
-        transition={{ delay, duration: 0.3, type: "spring", stiffness: 200 }}
-        className={`${sizeClass} rounded-md border border-amber-800/40 bg-gradient-to-br from-zinc-800 to-zinc-900 shadow-lg flex items-center justify-center ${className}`}
+      <div
+        className={cn(
+          s.w,
+          s.h,
+          "relative rounded-md border border-[#2a2a2a] shadow-md",
+          "bg-[linear-gradient(135deg,#1b1b22_0%,#262631_50%,#1b1b22_100%)]",
+          className,
+        )}
       >
-        <div className="w-[80%] h-[80%] rounded border border-amber-700/30 bg-[repeating-linear-gradient(45deg,rgba(201,168,76,0.05),rgba(201,168,76,0.05)_2px,transparent_2px,transparent_8px)]" />
-      </motion.div>
+        <div className="absolute inset-1 rounded-sm border border-[#c9a84c]/25" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-[#c9a84c]/40 text-lg font-[family-name:var(--font-space-grotesk)]">
+            ♠
+          </span>
+        </div>
+      </div>
     );
   }
 
-  const suitColor = SUIT_COLORS[card.suit] || "text-zinc-100";
+  const color = SUIT_COLORS[card.suit];
+  const symbol = SUIT_SYMBOLS[card.suit];
+  const label = RANK_LABELS[card.rank];
 
   return (
     <motion.div
-      initial={{ scale: 0, y: -20, opacity: 0 }}
-      animate={{ scale: 1, y: 0, opacity: 1 }}
-      transition={{ delay, duration: 0.35, type: "spring", stiffness: 180 }}
-      className={`${sizeClass} rounded-md bg-white shadow-lg flex flex-col relative overflow-hidden cursor-default select-none
-        ${highlight ? "ring-2 ring-amber-400 ring-offset-1 ring-offset-zinc-900" : ""}
-        ${className}`}
+      initial={{ rotateY: 90, opacity: 0 }}
+      animate={{ rotateY: 0, opacity: 1 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className={cn(
+        s.w,
+        s.h,
+        s.pad,
+        "relative rounded-md bg-[#f7f5ef] shadow-md flex flex-col justify-between select-none",
+        dim && "opacity-50",
+        className,
+      )}
+      style={{ transformStyle: "preserve-3d" }}
     >
-      {/* Top-left corner */}
-      <div className={`absolute top-1 left-1 ${textSize} font-bold leading-none ${suitColor} flex flex-col items-center`}>
-        <span>{card.rank}</span>
-        <span className="text-[10px]">{card.suit}</span>
+      <div
+        className={cn("leading-none font-bold", s.corner)}
+        style={{ color }}
+      >
+        <div>{label}</div>
+        <div className="-mt-0.5">{symbol}</div>
       </div>
-
-      {/* Center */}
-      <div className={`absolute inset-0 flex items-center justify-center ${centerSize} ${suitColor} font-bold`}>
-        {card.suit}
+      <div
+        className={cn("absolute inset-0 flex items-center justify-center font-bold", s.center)}
+        style={{ color }}
+      >
+        {symbol}
       </div>
-
-      {/* Bottom-right corner (rotated) */}
-      <div className={`absolute bottom-1 right-1 ${textSize} font-bold leading-none ${suitColor} flex flex-col items-center rotate-180`}>
-        <span>{card.rank}</span>
-        <span className="text-[10px]">{card.suit}</span>
+      <div
+        className={cn("self-end rotate-180 leading-none font-bold", s.corner)}
+        style={{ color }}
+      >
+        <div>{label}</div>
+        <div className="-mt-0.5">{symbol}</div>
       </div>
     </motion.div>
   );

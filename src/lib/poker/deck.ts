@@ -1,35 +1,63 @@
-import { Card, Rank, Suit } from './types';
+import type { Card, Suit } from "./types";
 
-export const SUITS: Suit[] = ['♠', '♥', '♦', '♣'];
-export const RANKS: Rank[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+export const SUITS: Suit[] = ["s", "h", "d", "c"];
+export const RANKS: number[] = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 export function createDeck(): Card[] {
   const deck: Card[] = [];
   for (const suit of SUITS) {
     for (const rank of RANKS) {
-      deck.push({ rank, suit, id: `${rank}${suit}` });
+      deck.push({ rank, suit });
     }
   }
   return deck;
 }
 
-/** Fisher-Yates shuffle — mutates in place and returns the array */
-export function shuffleDeck(deck: Card[]): Card[] {
-  for (let i = deck.length - 1; i > 0; i--) {
+// Fisher-Yates shuffle (non-mutating: returns a new shuffled array)
+export function shuffle<T>(input: T[]): T[] {
+  const arr = input.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return deck;
+  return arr;
 }
 
-export function createShuffledDeck(): Card[] {
-  return shuffleDeck(createDeck());
+// Deal n cards from the top of the deck, mutating the deck array.
+export function deal(deck: Card[], n: number): Card[] {
+  return deck.splice(0, n);
 }
 
-export function rankToValue(rank: Rank): number {
-  const values: Record<Rank, number> = {
-    '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8,
-    '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14,
-  };
-  return values[rank];
+export const RANK_LABELS: Record<number, string> = {
+  2: "2",
+  3: "3",
+  4: "4",
+  5: "5",
+  6: "6",
+  7: "7",
+  8: "8",
+  9: "9",
+  10: "10",
+  11: "J",
+  12: "Q",
+  13: "K",
+  14: "A",
+};
+
+export const SUIT_SYMBOLS: Record<Suit, string> = {
+  s: "♠", // ♠
+  h: "♥", // ♥
+  d: "♦", // ♦
+  c: "♣", // ♣
+};
+
+export const SUIT_COLORS: Record<Suit, string> = {
+  s: "#1e293b",
+  h: "#dc2626",
+  d: "#0ea5e9",
+  c: "#059669",
+};
+
+export function cardToString(c: Card): string {
+  return `${RANK_LABELS[c.rank]}${SUIT_SYMBOLS[c.suit]}`;
 }

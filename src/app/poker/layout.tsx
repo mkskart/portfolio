@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Poker — Texas Hold'em",
-  description: "Multiplayer Texas Hold'em poker with bot opponents",
+  description: "Single-player Texas Hold'em against AI bots.",
 };
 
-export default function PokerLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
-      {children}
-    </div>
-  );
+export default function PokerLayout({ children }: { children: ReactNode }) {
+  return <div className="min-h-screen bg-[#0a0a0a] text-white">{children}</div>;
 }

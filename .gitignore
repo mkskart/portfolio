@@ -40,7 +40,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/claude
-
-# next.js auto-generated agent instructions
-AGENTS.md.claude/
+.claude/

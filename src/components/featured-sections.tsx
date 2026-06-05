@@ -9,8 +9,8 @@ import { LiteWingSection } from "@/components/litewing/litewing-section";
 import { ProjectSpotlight } from "@/components/project-spotlight";
 
 /**
- * Renders the two per-mode headliner projects (the first two entries of the
- * active mode's projectOrder). LiteWing and QuantClaw have bespoke sections;
+ * Renders the per-mode headliner project (the featured entry of the active
+ * mode's projectOrder). LiteWing and QuantClaw have bespoke sections;
  * everything else falls back to a ProjectSpotlight.
  */
 function renderFeatured(id: string, anchorId?: string) {
@@ -23,7 +23,7 @@ function renderFeatured(id: string, anchorId?: string) {
 
 export function FeaturedSections() {
   const { mode } = useMode();
-  const [primaryId, secondaryId] = MODE_CONTENT[mode].projectOrder;
+  const [primaryId] = MODE_CONTENT[mode].projectOrder;
 
   // TradingSection/LiteWingSection carry their own ids; for the work-anchor we
   // place an explicit anchor before the primary so /#work resolves in any mode.
@@ -38,7 +38,6 @@ export function FeaturedSections() {
       >
         <span id="work" aria-hidden className="block" />
         {renderFeatured(primaryId)}
-        {renderFeatured(secondaryId, "featured-secondary")}
       </motion.div>
     </AnimatePresence>
   );

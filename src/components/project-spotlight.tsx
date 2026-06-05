@@ -28,9 +28,9 @@ export function ProjectSpotlight({
           viewport={{ once: true, margin: "-15% 0px" }}
           transition={{ duration: 1, ease }}
         >
-          {project.isNew && (
+          {project.isActiveResearch && (
             <span className="mb-4 block font-mono text-xs uppercase tracking-widest text-red-glow">
-              New
+              ● Active Research
             </span>
           )}
           <h2 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-text-primary md:text-[3.5rem]">
@@ -52,7 +52,7 @@ export function ProjectSpotlight({
               </span>
             ))}
           </div>
-          {project.github && (
+          {project.github ? (
             <a
               href={project.github}
               target="_blank"
@@ -62,6 +62,17 @@ export function ProjectSpotlight({
               GitHub
               <span className="transition-transform group-hover:translate-x-1">→</span>
             </a>
+          ) : project.isActiveResearch ? (
+            <span
+              className="mt-8 inline-block font-mono text-xs"
+              style={{ color: "var(--accent)", opacity: 0.5 }}
+            >
+              Active research
+            </span>
+          ) : (
+            <span className="mt-8 inline-block font-mono text-xs text-text-muted opacity-50">
+              Repo private
+            </span>
           )}
         </motion.div>
 

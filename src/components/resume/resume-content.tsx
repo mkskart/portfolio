@@ -2,7 +2,6 @@
 
 import { SiteMode } from "@/lib/mode";
 import { MODE_CONTENT } from "@/lib/mode-content";
-import { ALL_PROJECTS, orderedProjects, Project } from "@/lib/projects-data";
 import { ResumeHeader } from "./header";
 import { ResumeSection, ResumeRole, Bullet } from "./section";
 import { Skills } from "./skills";
@@ -14,24 +13,14 @@ import {
   LogicAnalyzer,
 } from "./animated-icons";
 
-function projectIcon(id: string) {
-  if (id === "litewing") return <LogicAnalyzer width={56} height={28} />;
-  if (id === "quantclaw") return <MiniEquity width={56} height={28} />;
+function projectIcon(name: string) {
+  if (name.startsWith("LiteWing")) return <LogicAnalyzer width={56} height={28} />;
+  if (name === "QuantClaw") return <MiniEquity width={56} height={28} />;
   return undefined;
 }
 
-/** Projects for the resume body: mode-ordered, minus HCRL (it's an Experience role). */
-function resumeProjects(order: string[]): Project[] {
-  const inOrder = orderedProjects(order).filter((p) => p.id !== "hcrl");
-  const extras = ALL_PROJECTS.filter(
-    (p) => p.id !== "hcrl" && !order.includes(p.id),
-  );
-  return [...inOrder, ...extras];
-}
-
 export function ResumeContent({ mode }: { mode: SiteMode }) {
-  const { experienceFraming, projectOrder } = MODE_CONTENT[mode];
-  const projects = resumeProjects(projectOrder);
+  const { experienceFraming, resumeProjects } = MODE_CONTENT[mode];
 
   return (
     <article className="mx-auto max-w-[760px] px-6 pt-28 pb-32 md:px-8">
@@ -113,15 +102,37 @@ export function ResumeContent({ mode }: { mode: SiteMode }) {
       </ResumeSection>
 
       <ResumeSection title="Projects">
-        {projects.map((p) => (
+        {resumeProjects.map((p) => (
           <ResumeRole
-            key={p.id}
-            org={p.isNew ? `${p.name} · New` : p.name}
-            role={p.stack.join(" · ")}
+            key={p.name}
+            org={p.name}
+            role={p.tagline}
             dates=""
-            icon={projectIcon(p.id)}
+            icon={projectIcon(p.name)}
           >
-            <Bullet>{p.description}</Bullet>
+            {p.bullets.map((b, i) => (
+              <Bullet key={i}>{b}</Bullet>
+            ))}
+            <li className="flex flex-wrap items-center gap-2 pt-1">
+              {p.stack.map((s) => (
+                <span
+                  key={s}
+                  className="rounded-full border border-border-subtle bg-bg-elevated/60 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-text-muted"
+                >
+                  {s}
+                </span>
+              ))}
+              {p.github && (
+                <a
+                  href={p.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-[11px] text-text-muted transition-colors hover:text-red-glow"
+                >
+                  GitHub →
+                </a>
+              )}
+            </li>
           </ResumeRole>
         ))}
       </ResumeSection>

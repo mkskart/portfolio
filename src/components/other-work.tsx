@@ -6,19 +6,18 @@ import { X } from "lucide-react";
 import { ease } from "@/lib/motion";
 import { useMode } from "@/lib/mode-context";
 import { MODE_CONTENT } from "@/lib/mode-content";
-import { ALL_PROJECTS, orderedProjects, Project } from "@/lib/projects-data";
+import { orderedProjects, Project } from "@/lib/projects-data";
 
-/** Projects that get their own full-width featured section never duplicate here. */
+/**
+ * Mode-scoped Other Work cards: the active mode's projectOrder, minus the
+ * featured headliners (which render as full-width sections above).
+ */
 function otherWorkProjects(order: string[]): Project[] {
-  const featured = new Set(order.slice(0, 2));
-  const inOrder = orderedProjects(order).filter((p) => !featured.has(p.id));
-  const extras = ALL_PROJECTS.filter((p) => !order.includes(p.id));
-  return [...inOrder, ...extras];
+  return orderedProjects(order).filter((p) => !p.isFeatured);
 }
 
 function projectTag(p: Project): string | undefined {
-  if (p.id === "hcrl") return "● ACTIVE RESEARCH";
-  if (p.isNew) return "NEW";
+  if (p.isActiveResearch) return "● ACTIVE RESEARCH";
   return undefined;
 }
 
@@ -146,7 +145,7 @@ export function OtherWork() {
                     </span>
                   ))}
                 </div>
-                {open.github && (
+                {open.github ? (
                   <a
                     href={open.github}
                     target="_blank"
@@ -155,6 +154,17 @@ export function OtherWork() {
                   >
                     GitHub →
                   </a>
+                ) : open.isActiveResearch ? (
+                  <span
+                    className="font-mono text-xs"
+                    style={{ color: "var(--accent)", opacity: 0.5 }}
+                  >
+                    Active research
+                  </span>
+                ) : (
+                  <span className="font-mono text-xs text-text-muted opacity-50">
+                    Repo private
+                  </span>
                 )}
               </div>
             </motion.div>

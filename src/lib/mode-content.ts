@@ -1,11 +1,21 @@
 import { SiteMode } from "./mode";
 
+export interface ResumeProject {
+  name: string;
+  tagline: string;
+  bullets: string[];
+  stack: string[];
+  github?: string;
+}
+
 export interface ModeContent {
   subtitleCycle: string[];
   introParagraph: string;
   skillCategories: { label: string; items: string[] }[];
   /** Project IDs (see projects-data.ts) in priority order for this mode. */
   projectOrder: string[];
+  /** Mode-tailored project entries rendered on the resume page. */
+  resumeProjects: ResumeProject[];
   experienceFraming: {
     hcrl: string[];
     nov: string[];
@@ -44,10 +54,51 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
       "litewing",
       "nrf9160-template",
       "pid-motor-sim",
-      "kinematic-transformer",
-      "jarvis",
-      "quantclaw",
-      "smart-scheduler",
+      "obstacle-robot",
+      "hcrl",
+    ],
+    resumeProjects: [
+      {
+        name: "LiteWing Drone",
+        tagline: "C++ · ESP32 · FreeRTOS",
+        bullets: [
+          "Wrote a C++ flight controller on ESP32 running a 1.0ms PID attitude loop, measured at 45µs of jitter using GPIO toggling captured on a Saleae logic analyzer.",
+          "Implemented I²C sensor fusion pipeline reading MPU-6050 IMU, driving four motors via 400Hz PWM — stable hover within ±2.5° over 60-second tests.",
+          "Built a custom ESP-NOW telemetry layer for low-overhead controller-to-drone communication.",
+        ],
+        stack: ["C++", "FreeRTOS", "ESP32", "MPU-6050"],
+        github: "https://github.com/mkskart/litewing",
+      },
+      {
+        name: "nrf9160-zephyr-template",
+        tagline: "C · Zephyr RTOS · nRF9160",
+        bullets: [
+          "Open-sourced production Zephyr firmware generalized from NOV field deployment — LTE-M bring-up with exponential backoff, GNSS PVT parsing, AWS IoT Core MQTT over mTLS.",
+          "Automated TLS certificate provisioning via AT%CMNG, cutting per-unit onboarding from hours to under one minute across 50+ deployed units.",
+        ],
+        stack: ["C", "Zephyr RTOS", "nRF9160", "LTE-M", "AWS IoT"],
+        github: "https://github.com/mkskart/nrf9160-zephyr-template",
+      },
+      {
+        name: "pid-motor-sim",
+        tagline: "Python · Control Systems",
+        bullets: [
+          "3-DOF DC motor arm simulation with anti-windup PID, derivative-on-measurement, and Ziegler-Nichols auto-tuning across 80 gain configurations.",
+          "Outputs rise time, settling time, and overshoot metrics per configuration. Public analog of HCRL motor API and LiteWing flight controller work.",
+        ],
+        stack: ["Python"],
+        github: "https://github.com/mkskart/pid-motor-sim",
+      },
+      {
+        name: "Obstacle Avoidance Robot",
+        tagline: "C++ · Arduino · Raspberry Pi",
+        bullets: [
+          "Hybrid Arduino/RPi navigation stack fusing ToF and ultrasonic sensors. Dijkstra pathfinding on occupancy grid with live replanning on obstacle detection.",
+          "Custom UART protocol with XOR checksum validation between boards — 99.9% packet delivery in testing.",
+        ],
+        stack: ["C++", "Arduino", "Raspberry Pi"],
+        github: "https://github.com/mkskart/obstacle-avoidance",
+      },
     ],
     experienceFraming: {
       hcrl: [
@@ -101,12 +152,51 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
     ],
     projectOrder: [
       "quantclaw",
-      "kinematic-transformer",
-      "litewing",
-      "jarvis",
-      "nrf9160-template",
-      "pid-motor-sim",
-      "smart-scheduler",
+      "stat-arb",
+      "options-dashboard",
+      "factor-model",
+    ],
+    resumeProjects: [
+      {
+        name: "QuantClaw",
+        tagline: "Python · Genetic Algorithms · Alpaca API",
+        bullets: [
+          "Genetic algorithm breeds 50 VWAP+RSI strategy variants over 50 generations daily; 12-month backtest on 5-minute candles: 70% win rate, 250 trades, +20% net return.",
+          "Live paper trading: +$160 on $800 starting balance in under one month. Isolation Forest circuit breaker halts on volatility anomalies. Groq LLM agent variant for autonomous decisions.",
+        ],
+        stack: ["Python", "Genetic Algorithms", "Alpaca API", "Groq API"],
+        github: "https://github.com/mkskart/QuantClaw",
+      },
+      {
+        name: "Statistical Arbitrage Engine",
+        tagline: "Python · Kalman Filter · HMM",
+        bullets: [
+          "Screens single-sector universe for cointegrated pairs (Engle-Granger), models spread with OLS and dynamic Kalman-filter hedge ratio. OLS Sharpe 1.74, max DD −5.2% on energy sector.",
+          "Kalman hedge produces 3.7× tighter spread vs OLS (PSX/MPC: σ 1.71 vs 6.28). 2-state HMM volatility-regime filter suppresses entries in high-vol regimes. Survivorship bias documented.",
+        ],
+        stack: ["Python", "Kalman Filter", "HMM", "statsmodels"],
+        github: "https://github.com/mkskart/statistical-arbitrage-engine",
+      },
+      {
+        name: "Options Pricing & Greeks Dashboard",
+        tagline: "Python · NumPy · SciPy · Black-Scholes",
+        bullets: [
+          "Closed-form BSM with all 5 Greeks (no QuantLib). Monte Carlo with antithetic variates: ~40% SE reduction vs plain MC on equal sample budget. Brent's method IV inversion to ~1e-10 precision.",
+          "Live IV surface from SPY yfinance chain across 12 expiries — produces correct downward skew, visually demonstrating where BSM's constant-vol assumption fails.",
+        ],
+        stack: ["Python", "NumPy", "SciPy", "plotly"],
+        github: "https://github.com/mkskart/options-pricing-dashboard",
+      },
+      {
+        name: "Factor Model / Alpha Research",
+        tagline: "Python · Fama-French · Mean-Variance Optimization",
+        bullets: [
+          "FF3 replication on 40 large-caps, 155 months. Cross-sectional mean market beta ~0.97, SMB ~−0.18 (genuine large-cap tilt), R² ~41%. Survivorship bias documented explicitly.",
+          "Barra-style max-Sharpe optimizer: Sharpe ~1.68 vs SPY ~0.9 in-sample. Custom short-term reversal factor with IC diagnostics: mean IC ~0.017 correctly identifies signal as non-tradeable in mega-caps.",
+        ],
+        stack: ["Python", "statsmodels", "scipy"],
+        github: "https://github.com/mkskart/factor-model-alpha-research",
+      },
     ],
     experienceFraming: {
       hcrl: [
@@ -156,11 +246,61 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
     projectOrder: [
       "jarvis",
       "smart-scheduler",
-      "quantclaw",
-      "litewing",
-      "nrf9160-template",
       "kinematic-transformer",
-      "pid-motor-sim",
+      "recruit",
+      "vorticeapp",
+    ],
+    resumeProjects: [
+      {
+        name: "J.A.R.V.I.S.",
+        tagline: "Python · FastAPI · Ollama · Whisper.cpp",
+        bullets: [
+          "Fully local voice AI on Raspberry Pi 5: Porcupine wake-word, Whisper.cpp offline STT, Ollama LLM, Mem0 + ChromaDB persistent RAG memory. Nothing leaves the device.",
+          "Tool integrations: Gmail, Google Calendar, browser automation (Playwright), Telegram. FastAPI + WebSocket real-time dashboard. Sub-500ms median response on RPi 5.",
+        ],
+        stack: ["Python", "FastAPI", "Ollama", "Whisper.cpp", "ChromaDB", "Porcupine"],
+        github: "https://github.com/mkskart/J.A.R.V.I.S.",
+      },
+      {
+        name: "SmartScheduler",
+        tagline: "Python · FastAPI · React · TypeScript · Docker",
+        bullets: [
+          "Greedy deadline/priority scheduling backend: tasks sorted by priority then deadline, placed into working-hours slots respecting existing bookings. 120+ Pytest unit tests at 85% coverage.",
+          "Google OAuth 2.0 in Docker Compose microservices. Type-safe React + TypeScript frontend with real-time schedule updates.",
+        ],
+        stack: ["Python", "FastAPI", "SQLAlchemy", "React", "TypeScript", "Docker"],
+        github: "https://github.com/mkskart/smartschedule",
+      },
+      {
+        name: "kinematic-transformer",
+        tagline: "Python · PyTorch",
+        bullets: [
+          "PyTorch Transformer encoder (~69K params) for multi-joint kinematic sequence forecasting. Val MSE 0.003108, 0.571ms inference vs LSTM baseline 0.656ms.",
+          "Public analog of the ML pipeline powering HCRL bionic-hand teleoperation. Synthetic telemetry dataset, fully reproducible.",
+        ],
+        stack: ["Python", "PyTorch"],
+        github: "https://github.com/mkskart/kinematic-transformer",
+      },
+      {
+        name: "RecruIT",
+        tagline: "Node.js · TypeScript · Express · React · Vite",
+        bullets: [
+          "Full-stack internship tracking dashboard with cron-based scraping from 4 GitHub-hosted job boards (quant + SWE tracks). Fit scoring engine (0–100) on track match, skill keywords, location, and firm prestige.",
+          "Email digest notifications via nodemailer. React + Vite + TypeScript frontend with drag-and-drop kanban and Recharts analytics dashboard.",
+        ],
+        stack: ["Node.js", "TypeScript", "Express", "SQLite", "React", "Vite"],
+        github: "https://github.com/mkskart/RecruIT",
+      },
+      {
+        name: "VorticeApp",
+        tagline: "Python · matplotlib · CFD Visualization",
+        bullets: [
+          "Python data visualization tools for multi-gigabyte CFD vortex datasets, built for a graduate research team at University of Houston.",
+          "Four chart types: 3D volumetric vortex structure, hierarchical tree, scatterplot cluster analysis, time-series line tracking. Credited on NSF Multi-scale Coherent Structure Extraction project webpage.",
+        ],
+        stack: ["Python", "matplotlib", "scikit-learn"],
+        github: undefined,
+      },
     ],
     experienceFraming: {
       hcrl: [

@@ -187,7 +187,7 @@ export function ViolinSection({ id }: { id?: string }) {
     <section
       id={id}
       data-section="violin"
-      className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-bg-base px-6 pt-4 pb-32"
+      className="relative flex w-full flex-col items-center justify-center overflow-hidden bg-bg-base px-6 pt-16 pb-32"
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}

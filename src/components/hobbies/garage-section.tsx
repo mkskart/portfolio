@@ -26,7 +26,7 @@ export function GarageSection({ id }: { id?: string }) {
     <section
       id={id}
       data-section="garage"
-      className="relative min-h-screen w-full bg-bg-base px-6 pt-32 pb-12 md:px-10"
+      className="relative min-h-screen w-full bg-bg-base px-6 pt-32 pb-4 md:px-10"
     >
       <div className="mx-auto flex max-w-[1400px] flex-col gap-10">
         {/* Header */}

@@ -18,6 +18,12 @@ import {
   StepResponse,
   NodeGraph,
   CalendarGrid,
+  RadarSweep,
+  PairSpread,
+  PayoffCurve,
+  FactorBars,
+  ProfileCard,
+  VortexSpiral,
 } from "./animated-icons";
 
 function projectIcon(name: string) {
@@ -27,7 +33,14 @@ function projectIcon(name: string) {
   if (name.startsWith("nrf9160")) return <AntennaSignal size={28} />;
   if (name.startsWith("pid-motor")) return <StepResponse width={56} height={28} />;
   if (name.startsWith("kinematic")) return <NodeGraph size={28} />;
-  if (name.startsWith("Smart Scheduler")) return <CalendarGrid size={28} />;
+  if (name.startsWith("SmartScheduler") || name.startsWith("Smart Scheduler"))
+    return <CalendarGrid size={28} />;
+  if (name.startsWith("Obstacle Avoidance")) return <RadarSweep size={28} />;
+  if (name.startsWith("Statistical Arbitrage")) return <PairSpread width={56} height={28} />;
+  if (name.startsWith("Options Pricing")) return <PayoffCurve width={56} height={28} />;
+  if (name.startsWith("Factor Model")) return <FactorBars width={56} height={28} />;
+  if (name.startsWith("RecruIT")) return <ProfileCard size={28} />;
+  if (name.startsWith("VorticeApp")) return <VortexSpiral size={28} />;
   return undefined;
 }
 

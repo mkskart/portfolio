@@ -390,6 +390,140 @@ export function CalendarGrid({ size = 28 }: { size?: number }) {
   );
 }
 
+/** Radar sweep — Obstacle Avoidance Robot */
+export function RadarSweep({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {[6, 11, 16].map((r, i) => (
+        <motion.circle key={r} cx="18" cy="18" r={r} fill="none" stroke="currentColor" strokeWidth="1" opacity={0.4}
+          initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.4 : 0 }}
+          transition={{ duration: 0.4, delay: i * 0.12, ease }} />
+      ))}
+      {/* sweeping arm */}
+      <motion.line x1="18" y1="18" x2="18" y2="2" stroke="currentColor" strokeWidth="1.4"
+        style={{ originX: "18px", originY: "18px" }}
+        animate={inView ? { rotate: [0, 360] } : {}}
+        transition={{ duration: 2.4, repeat: Infinity, ease: "linear" }} />
+      {/* blips */}
+      <motion.circle cx="26" cy="12" r="1.6" fill="currentColor"
+        animate={inView ? { opacity: [0, 1, 0] } : {}}
+        transition={{ duration: 2.4, repeat: Infinity, times: [0, 0.2, 0.45] }} />
+      <motion.circle cx="11" cy="24" r="1.6" fill="currentColor"
+        animate={inView ? { opacity: [0, 1, 0] } : {}}
+        transition={{ duration: 2.4, repeat: Infinity, times: [0.5, 0.7, 0.95] }} />
+    </svg>
+  );
+}
+
+/** Converging pair spread — Statistical Arbitrage */
+export function PairSpread({ width = 56, height = 28 }: { width?: number; height?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true });
+  const a = `M 0 ${height * 0.25} C ${width * 0.3} ${height * 0.1}, ${width * 0.55} ${height * 0.55}, ${width} ${height * 0.45}`;
+  const b = `M 0 ${height * 0.75} C ${width * 0.3} ${height * 0.9}, ${width * 0.55} ${height * 0.45}, ${width} ${height * 0.55}`;
+  return (
+    <svg ref={ref} viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      <motion.path d={a} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 1.4, ease }} />
+      <motion.path d={b} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity={0.55}
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 1.4, ease }} />
+    </svg>
+  );
+}
+
+/** Option payoff hockey-stick — Options Pricing & Greeks */
+export function PayoffCurve({ width = 56, height = 28 }: { width?: number; height?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true });
+  const zero = height - 5;
+  const pts = `0,${zero} ${width * 0.45},${zero} ${width},5`;
+  return (
+    <svg ref={ref} viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {/* breakeven axis */}
+      <line x1="0" y1={zero} x2={width} y2={zero} stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.35" />
+      <motion.polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 1.3, ease }} />
+    </svg>
+  );
+}
+
+/** Factor bar chart — Factor Model / Alpha Research */
+export function FactorBars({ width = 56, height = 28 }: { width?: number; height?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true });
+  const bars = [0.5, 0.85, 0.35, 0.7, 0.55];
+  const bw = width / (bars.length * 1.6);
+  return (
+    <svg ref={ref} viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      <line x1="0" y1={height - 1} x2={width} y2={height - 1} stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+      {bars.map((h, i) => {
+        const bh = h * (height - 4);
+        const x = i * (bw * 1.6) + bw * 0.3;
+        return (
+          <motion.rect key={i} x={x} width={bw} y={height - 1 - bh} height={bh} fill="currentColor" opacity={0.8}
+            initial={{ scaleY: 0, originY: 1 }} animate={{ scaleY: inView ? 1 : 0 }}
+            transition={{ duration: 0.5, delay: i * 0.1, ease }} style={{ transformBox: "fill-box", originY: "100%" }} />
+        );
+      })}
+    </svg>
+  );
+}
+
+/** Profile card — RecruIT */
+export function ProfileCard({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      <motion.rect x="4" y="7" width="28" height="22" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.3"
+        initial={{ opacity: 0 }} animate={{ opacity: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, ease }} />
+      {/* avatar */}
+      <motion.circle cx="13" cy="15" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.3"
+        initial={{ scale: 0 }} animate={{ scale: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, delay: 0.25, ease }} style={{ transformBox: "fill-box", originX: "50%", originY: "50%" }} />
+      <motion.path d="M 8 24 Q 13 19 18 24" fill="none" stroke="currentColor" strokeWidth="1.3"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, delay: 0.45, ease }} />
+      {/* detail lines */}
+      {[13, 18, 23].map((y, i) => (
+        <motion.line key={y} x1="22" y1={y} x2="28" y2={y} stroke="currentColor" strokeWidth="1.2" opacity={0.6}
+          initial={{ scaleX: 0 }} animate={{ scaleX: inView ? 1 : 0 }}
+          transition={{ duration: 0.35, delay: 0.5 + i * 0.1, ease }} style={{ originX: "0%" }} />
+      ))}
+    </svg>
+  );
+}
+
+/** Vortex spiral — VorticeApp */
+export function VortexSpiral({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  // Archimedean spiral
+  let d = "M 18 18";
+  const turns = 3;
+  const steps = 60;
+  for (let i = 1; i <= steps; i++) {
+    const t = (i / steps) * turns * Math.PI * 2;
+    const r = (i / steps) * 14;
+    const x = 18 + r * Math.cos(t);
+    const y = 18 + r * Math.sin(t);
+    d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      <motion.path d={d} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 1.6, ease }} />
+    </svg>
+  );
+}
+
 export function LogicAnalyzer({ width = 100, height = 28 }: { width?: number; height?: number }) {
   const ref = useRef<SVGSVGElement>(null);
   const inView = useInView(ref, { once: true });

@@ -203,6 +203,193 @@ export function MiniEquity({ width = 100, height = 28 }: { width?: number; heigh
   );
 }
 
+/** Bank columns — J.P. Morgan */
+export function BankColumns({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const cols = [6, 14, 22, 30];
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {/* pediment */}
+      <motion.polyline
+        points="2,14 18,4 34,14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 0.6, ease }}
+      />
+      {/* base */}
+      <motion.line x1="2" y1="32" x2="34" y2="32" stroke="currentColor" strokeWidth="1.4"
+        initial={{ scaleX: 0 }} animate={{ scaleX: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, delay: 0.55, ease }} style={{ originX: "50%" }} />
+      {/* columns */}
+      {cols.map((x, i) => (
+        <motion.line key={x} x1={x} x2={x} y1="14" y2="32" stroke="currentColor" strokeWidth="1.2"
+          initial={{ scaleY: 0 }} animate={{ scaleY: inView ? 1 : 0 }}
+          transition={{ duration: 0.45, delay: 0.3 + i * 0.07, ease }} style={{ originY: "100%" }} />
+      ))}
+    </svg>
+  );
+}
+
+/** Scatter plot — UH CFD research */
+export function ScatterPlot({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const dots = [
+    [8, 24], [12, 18], [16, 22], [20, 12], [24, 16], [28, 8], [10, 30], [22, 28],
+  ] as const;
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      <motion.line x1="4" y1="32" x2="4" y2="4" stroke="currentColor" strokeWidth="1.2"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, ease }} />
+      <motion.line x1="4" y1="32" x2="34" y2="32" stroke="currentColor" strokeWidth="1.2"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, ease }} />
+      {dots.map(([cx, cy], i) => (
+        <motion.circle key={i} cx={cx} cy={cy} r="1.8" fill="currentColor"
+          initial={{ opacity: 0, scale: 0 }} animate={{ opacity: inView ? 0.85 : 0, scale: inView ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: 0.35 + i * 0.07, ease }} />
+      ))}
+    </svg>
+  );
+}
+
+/** Pulsing mic rings — JARVIS voice AI */
+export function VoiceRings({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {/* mic body */}
+      <motion.rect x="14" y="6" width="8" height="13" rx="4" fill="none" stroke="currentColor" strokeWidth="1.4"
+        initial={{ opacity: 0 }} animate={{ opacity: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, ease }} />
+      {/* stand arc */}
+      <motion.path d="M 10 17 Q 10 26 18 26 Q 26 26 26 17" fill="none" stroke="currentColor" strokeWidth="1.4"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 0.5, delay: 0.3, ease }} />
+      <motion.line x1="18" y1="26" x2="18" y2="31" stroke="currentColor" strokeWidth="1.4"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 0.3, delay: 0.7, ease }} />
+      {/* pulse ring */}
+      <motion.circle cx="18" cy="14" r="10" fill="none" stroke="currentColor" strokeWidth="0.8"
+        animate={inView ? { opacity: [0, 0.4, 0], scale: [0.7, 1.2, 0.7] } : {}}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} />
+    </svg>
+  );
+}
+
+/** Antenna / signal bars — nRF9160 LTE */
+export function AntennaSignal({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {/* mast */}
+      <motion.line x1="18" y1="32" x2="18" y2="10" stroke="currentColor" strokeWidth="1.4"
+        initial={{ scaleY: 0 }} animate={{ scaleY: inView ? 1 : 0 }}
+        transition={{ duration: 0.5, ease }} style={{ originY: "100%" }} />
+      {/* arcs */}
+      {[6, 11, 16].map((r, i) => (
+        <motion.path key={r} d={`M ${18 - r} ${10 + r * 0.5} Q 18 ${10 - r * 0.8} ${18 + r} ${10 + r * 0.5}`}
+          fill="none" stroke="currentColor" strokeWidth="1.2"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: inView ? 1 : 0, opacity: inView ? 1 : 0 }}
+          transition={{ duration: 0.4, delay: 0.4 + i * 0.15, ease }} />
+      ))}
+    </svg>
+  );
+}
+
+/** Step-response curve — PID motor sim */
+export function StepResponse({ width = 56, height = 28 }: { width?: number; height?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true });
+  const mid = height / 2;
+  const top = 5;
+  // step + damped oscillation settling
+  const pts = [
+    `0,${height - 3}`,
+    `${width * 0.18},${height - 3}`,
+    `${width * 0.18},${top + 1}`,
+    `${width * 0.32},${top - 3}`,
+    `${width * 0.44},${top + 5}`,
+    `${width * 0.56},${top + 1}`,
+    `${width * 0.68},${top + 3}`,
+    `${width * 0.8},${top + 1.5}`,
+    `${width},${top + 2}`,
+  ].join(" L ");
+  return (
+    <svg ref={ref} viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {/* setpoint dashed line */}
+      <line x1="0" y1={top + 2} x2={width} y2={top + 2} stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.35" />
+      <motion.path d={"M " + pts} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"
+        initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 1.4, ease }} />
+    </svg>
+  );
+}
+
+/** Connected nodes — kinematic transformer */
+export function NodeGraph({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const nodes = [[18, 6], [8, 20], [28, 20], [13, 32], [23, 32]] as const;
+  const edges = [[0,1],[0,2],[1,2],[1,3],[2,4],[1,4],[2,3]] as const;
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {edges.map(([a, b], i) => (
+        <motion.line key={i}
+          x1={nodes[a][0]} y1={nodes[a][1]} x2={nodes[b][0]} y2={nodes[b][1]}
+          stroke="currentColor" strokeWidth="0.9" opacity={0.5}
+          initial={{ pathLength: 0 }} animate={{ pathLength: inView ? 1 : 0 }}
+          transition={{ duration: 0.4, delay: i * 0.08, ease }} />
+      ))}
+      {nodes.map(([cx, cy], i) => (
+        <motion.circle key={i} cx={cx} cy={cy} r="2.5" fill="currentColor"
+          initial={{ opacity: 0, scale: 0 }} animate={{ opacity: inView ? 1 : 0, scale: inView ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: 0.5 + i * 0.08, ease }} />
+      ))}
+    </svg>
+  );
+}
+
+/** Calendar grid — Smart Scheduler */
+export function CalendarGrid({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const cells = [[8,14],[16,14],[24,14],[8,22],[16,22],[24,22],[8,30],[16,30]];
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {/* border */}
+      <motion.rect x="3" y="7" width="30" height="26" rx="2" fill="none" stroke="currentColor" strokeWidth="1.3"
+        initial={{ opacity: 0 }} animate={{ opacity: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, ease }} />
+      {/* header bar */}
+      <motion.line x1="3" y1="13" x2="33" y2="13" stroke="currentColor" strokeWidth="1.1"
+        initial={{ scaleX: 0 }} animate={{ scaleX: inView ? 1 : 0 }}
+        transition={{ duration: 0.4, delay: 0.3, ease }} style={{ originX: "0%" }} />
+      {/* notches */}
+      {[11, 19].map((x, i) => (
+        <motion.line key={x} x1={x} y1="4" x2={x} y2="10" stroke="currentColor" strokeWidth="1.4"
+          initial={{ opacity: 0 }} animate={{ opacity: inView ? 1 : 0 }}
+          transition={{ delay: 0.1 + i * 0.1 }} />
+      ))}
+      {/* dots */}
+      {cells.map(([cx, cy], i) => (
+        <motion.circle key={i} cx={cx} cy={cy} r="1.6" fill="currentColor"
+          initial={{ opacity: 0 }} animate={{ opacity: inView ? [0, 1] : 0 }}
+          transition={{ duration: 0.2, delay: 0.5 + i * 0.06 }} />
+      ))}
+    </svg>
+  );
+}
+
 export function LogicAnalyzer({ width = 100, height = 28 }: { width?: number; height?: number }) {
   const ref = useRef<SVGSVGElement>(null);
   const inView = useInView(ref, { once: true });

@@ -11,11 +11,23 @@ import {
   Waveform,
   MiniEquity,
   LogicAnalyzer,
+  BankColumns,
+  ScatterPlot,
+  VoiceRings,
+  AntennaSignal,
+  StepResponse,
+  NodeGraph,
+  CalendarGrid,
 } from "./animated-icons";
 
 function projectIcon(name: string) {
   if (name.startsWith("LiteWing")) return <LogicAnalyzer width={56} height={28} />;
   if (name === "QuantClaw") return <MiniEquity width={56} height={28} />;
+  if (name.startsWith("J.A.R.V.I.S")) return <VoiceRings size={28} />;
+  if (name.startsWith("nrf9160")) return <AntennaSignal size={28} />;
+  if (name.startsWith("pid-motor")) return <StepResponse width={56} height={28} />;
+  if (name.startsWith("kinematic")) return <NodeGraph size={28} />;
+  if (name.startsWith("Smart Scheduler")) return <CalendarGrid size={28} />;
   return undefined;
 }
 
@@ -79,6 +91,7 @@ export function ResumeContent({ mode }: { mode: SiteMode }) {
           role="Software Engineering Intern"
           loc="Houston, TX"
           dates="Jun 2022 – Jul 2022"
+          icon={<BankColumns size={28} />}
         >
           {experienceFraming.jpmc.map((b, i) => (
             <Bullet key={i}>{b}</Bullet>
@@ -90,6 +103,7 @@ export function ResumeContent({ mode }: { mode: SiteMode }) {
           role="Computer Science Research Intern"
           loc="Houston, TX"
           dates="Jun 2023 – Aug 2023"
+          icon={<ScatterPlot size={28} />}
         >
           <Bullet>
             Built Python data-visualization tools to render multi-gigabyte CFD

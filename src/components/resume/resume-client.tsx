@@ -47,10 +47,13 @@ export function ResumeClient() {
           Back
         </Link>
 
+        {/* Absolutely centered so the toggle's position is independent of the
+            Back/Download widths — keeps the sliding pill animation stable when
+            the Download button changes width across mode switches. */}
         <div
           role="tablist"
           aria-label="Resume mode"
-          className="flex items-center gap-1 rounded-full border border-border-subtle bg-bg-elevated/60 p-1 backdrop-blur"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full border border-border-subtle bg-bg-elevated/60 p-1 backdrop-blur"
         >
           {MODES.map((m) => {
             const active = mode === m;

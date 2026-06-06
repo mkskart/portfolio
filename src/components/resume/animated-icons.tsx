@@ -401,11 +401,14 @@ export function RadarSweep({ size = 28 }: { size?: number }) {
           initial={{ opacity: 0 }} animate={{ opacity: inView ? 0.4 : 0 }}
           transition={{ duration: 0.4, delay: i * 0.12, ease }} />
       ))}
-      {/* sweeping arm */}
-      <motion.line x1="18" y1="18" x2="18" y2="2" stroke="currentColor" strokeWidth="1.4"
-        style={{ originX: "18px", originY: "18px" }}
+      {/* sweeping arm — rotate a <g> around the radar center */}
+      <motion.g
+        style={{ transformOrigin: "18px 18px" }}
         animate={inView ? { rotate: [0, 360] } : {}}
-        transition={{ duration: 2.4, repeat: Infinity, ease: "linear" }} />
+        transition={{ duration: 2.4, repeat: Infinity, ease: "linear" }}
+      >
+        <line x1="18" y1="18" x2="18" y2="2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      </motion.g>
       {/* blips */}
       <motion.circle cx="26" cy="12" r="1.6" fill="currentColor"
         animate={inView ? { opacity: [0, 1, 0] } : {}}

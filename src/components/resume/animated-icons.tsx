@@ -403,7 +403,7 @@ export function RadarSweep({ size = 28 }: { size?: number }) {
       ))}
       {/* sweeping arm — rotate a <g> around the radar center */}
       <motion.g
-        style={{ transformOrigin: "18px 18px" }}
+        style={{ transformBox: "view-box", transformOrigin: "18px 18px" }}
         animate={inView ? { rotate: [0, 360] } : {}}
         transition={{ duration: 2.4, repeat: Infinity, ease: "linear" }}
       >

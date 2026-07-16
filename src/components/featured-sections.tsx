@@ -5,16 +5,15 @@ import { useMode } from "@/lib/mode-context";
 import { MODE_CONTENT } from "@/lib/mode-content";
 import { projectById } from "@/lib/projects-data";
 import { TradingSection } from "@/components/trading/trading-section";
-import { LiteWingSection } from "@/components/litewing/litewing-section";
+import { FirmwareFlagships } from "@/components/firmware-flagships";
 import { ProjectSpotlight } from "@/components/project-spotlight";
 
 /**
- * Renders the per-mode headliner project (the featured entry of the active
- * mode's projectOrder). LiteWing and QuantClaw have bespoke sections;
+ * Renders the per-mode headliner. Firmware shares one spotlight across two
+ * flagship builds (LiteWing + Bionic Arm); QuantClaw has a bespoke section;
  * everything else falls back to a ProjectSpotlight.
  */
 function renderFeatured(id: string, anchorId?: string) {
-  if (id === "litewing") return <LiteWingSection />;
   if (id === "quantclaw") return <TradingSection />;
   const project = projectById(id);
   if (!project) return null;
@@ -37,7 +36,7 @@ export function FeaturedSections() {
         transition={{ duration: 0.3 }}
       >
         <span id="work" aria-hidden className="block" />
-        {renderFeatured(primaryId)}
+        {mode === "firmware" ? <FirmwareFlagships /> : renderFeatured(primaryId)}
       </motion.div>
     </AnimatePresence>
   );

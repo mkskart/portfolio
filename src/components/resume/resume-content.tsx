@@ -11,8 +11,6 @@ import {
   Waveform,
   MiniEquity,
   LogicAnalyzer,
-  BankColumns,
-  ScatterPlot,
   VoiceRings,
   AntennaSignal,
   StepResponse,
@@ -24,11 +22,14 @@ import {
   FactorBars,
   ProfileCard,
   VortexSpiral,
+  JetDelta,
+  CheckeredFlag,
 } from "./animated-icons";
 
 function projectIcon(name: string) {
   if (name.startsWith("LiteWing")) return <LogicAnalyzer width={56} height={28} />;
   if (name === "QuantClaw") return <MiniEquity width={56} height={28} />;
+  if (name === "PitWall") return <CheckeredFlag size={28} />;
   if (name.startsWith("J.A.R.V.I.S")) return <VoiceRings size={28} />;
   if (name.startsWith("nrf9160")) return <AntennaSignal size={28} />;
   if (name.startsWith("pid-motor")) return <StepResponse width={56} height={28} />;
@@ -45,7 +46,7 @@ function projectIcon(name: string) {
 }
 
 export function ResumeContent({ mode }: { mode: SiteMode }) {
-  const { experienceFraming, resumeProjects } = MODE_CONTENT[mode];
+  const { experienceFraming, resumeProjects, coursework } = MODE_CONTENT[mode];
 
   return (
     <article className="mx-auto max-w-[760px] px-6 pt-28 pb-32 md:px-8">
@@ -54,16 +55,12 @@ export function ResumeContent({ mode }: { mode: SiteMode }) {
       <ResumeSection title="Education">
         <ResumeRole
           org="University of Texas at Austin"
-          role="B.E. in Electrical and Computer Engineering · GPA 3.95 / 4.0"
+          role="B.S. in Electrical and Computer Engineering · GPA 3.95 / 4.0"
           loc="Austin, TX"
           dates="Expected May 2028"
           icon={<UTTower size={36} />}
         >
-          <Bullet>
-            Coursework: Embedded Systems, Digital Logic Design, DSP, Software
-            Design and Implementation, Circuit Theory, Discrete Mathematics,
-            Linear Algebra.
-          </Bullet>
+          <Bullet>Coursework: {coursework.join(" · ")}.</Bullet>
           <Bullet>
             Elements of Computing Certificate (CS) · Business Foundations Minor.
           </Bullet>
@@ -75,6 +72,18 @@ export function ResumeContent({ mode }: { mode: SiteMode }) {
       </ResumeSection>
 
       <ResumeSection title="Experience">
+        <ResumeRole
+          org="Southwest Research Institute"
+          role="Student Engineer, Tactical Aerospace Department (Division 16)"
+          loc="San Antonio, TX"
+          dates="May 2026 – Present"
+          icon={<JetDelta size={28} />}
+        >
+          {experienceFraming.swri.map((b, i) => (
+            <Bullet key={i}>{b}</Bullet>
+          ))}
+        </ResumeRole>
+
         <ResumeRole
           org="Human Centered Robotics Laboratory"
           role="Research Assistant, University of Texas at Austin"
@@ -97,34 +106,6 @@ export function ResumeContent({ mode }: { mode: SiteMode }) {
           {experienceFraming.nov.map((b, i) => (
             <Bullet key={i}>{b}</Bullet>
           ))}
-        </ResumeRole>
-
-        <ResumeRole
-          org="J.P. Morgan Chase"
-          role="Software Engineering Intern"
-          loc="Houston, TX"
-          dates="Jun 2022 – Jul 2022"
-          icon={<BankColumns size={28} />}
-        >
-          {experienceFraming.jpmc.map((b, i) => (
-            <Bullet key={i}>{b}</Bullet>
-          ))}
-        </ResumeRole>
-
-        <ResumeRole
-          org="University of Houston"
-          role="Computer Science Research Intern"
-          loc="Houston, TX"
-          dates="Jun 2023 – Aug 2023"
-          icon={<ScatterPlot size={28} />}
-        >
-          <Bullet>
-            Built Python data-visualization tools to render multi-gigabyte CFD
-            vortex datasets — 3D volumetric view, hierarchical tree views,
-            scatterplots, time-series line graphs — supporting a graduate
-            research team on coherent-structure extraction; credited on the NSF
-            project webpage.
-          </Bullet>
         </ResumeRole>
       </ResumeSection>
 

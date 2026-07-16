@@ -310,7 +310,6 @@ export function AntennaSignal({ size = 28 }: { size?: number }) {
 export function StepResponse({ width = 56, height = 28 }: { width?: number; height?: number }) {
   const ref = useRef<SVGSVGElement>(null);
   const inView = useInView(ref, { once: true });
-  const mid = height / 2;
   const top = 5;
   // step + damped oscillation settling
   const pts = [
@@ -567,6 +566,105 @@ export function LogicAnalyzer({ width = 100, height = 28 }: { width?: number; he
         animate={{ opacity: inView ? 1 : 0 }}
         transition={{ delay: 1.2 }}
       />
+    </svg>
+  );
+}
+
+/** Delta-wing jet with a pulsing sensor core — Southwest Research Institute */
+export function JetDelta({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const jet =
+    "M 18 3 L 20 15 L 33 27 L 20 25 L 20 30 L 24 34 L 18 32 L 12 34 L 16 30 L 16 25 L 3 27 L 16 15 Z";
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      <motion.path
+        d={jet}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: inView ? 1 : 0 }}
+        transition={{ duration: 1.4, ease }}
+      />
+      {/* sensor integration unit — pulsing core */}
+      <motion.circle
+        cx="18"
+        cy="19"
+        r="2.2"
+        fill="currentColor"
+        animate={inView ? { opacity: [0.4, 1, 0.4], scale: [0.8, 1.15, 0.8] } : {}}
+        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        style={{ transformBox: "fill-box", originX: "50%", originY: "50%" }}
+      />
+    </svg>
+  );
+}
+
+/** Checkered flag — PitWall F1 telemetry */
+export function CheckeredFlag({ size = 28 }: { size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const cols = 4;
+  const rows = 3;
+  const cw = 5.5;
+  const ch = 5;
+  const x0 = 9;
+  const y0 = 5;
+  const squares: { x: number; y: number; i: number }[] = [];
+  let idx = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if ((r + c) % 2 === 0) squares.push({ x: x0 + c * cw, y: y0 + r * ch, i: idx });
+      idx++;
+    }
+  }
+  return (
+    <svg ref={ref} viewBox="0 0 36 36" width={size} height={size} aria-hidden style={{ color: "var(--accent-glow)" }}>
+      {/* pole */}
+      <motion.line
+        x1="8"
+        y1="4"
+        x2="8"
+        y2="33"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: inView ? 1 : 0 }}
+        transition={{ duration: 0.5, ease }}
+        style={{ originY: "0%" }}
+      />
+      {/* flag border */}
+      <motion.rect
+        x="8.5"
+        y="4.5"
+        width={cols * cw + 0.5}
+        height={rows * ch}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        opacity={0.5}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: inView ? 0.5 : 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      />
+      {/* checker squares */}
+      {squares.map((s) => (
+        <motion.rect
+          key={s.i}
+          x={s.x}
+          y={s.y}
+          width={cw}
+          height={ch}
+          fill="currentColor"
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: inView ? 0.9 : 0, scale: inView ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: 0.3 + s.i * 0.05, ease }}
+          style={{ transformBox: "fill-box", originX: "50%", originY: "50%" }}
+        />
+      ))}
     </svg>
   );
 }

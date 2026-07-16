@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const links: { href: string; label: string }[] = [
+  { href: "/#experience", label: "Experience" },
   { href: "/#work", label: "Work" },
   { href: "/#hobbies", label: "Hobbies" },
   { href: "/#contact", label: "Contact" },

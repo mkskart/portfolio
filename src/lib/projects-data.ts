@@ -57,17 +57,6 @@ export const ALL_PROJECTS: Project[] = [
     github: "https://github.com/mkskart/obstacle-avoidance",
     modes: ["firmware"],
   },
-  {
-    id: "hcrl",
-    name: "HCRL Bionic Arm",
-    tagline: "16-DOF bionic hand control — active research",
-    description:
-      "Transformer-based motion prediction and PID control for a 16-DOF bionic arm at UT's Human Centered Robotics Lab. 1ms sensor-to-actuation latency. 10-joint modular PID API with pressure and tension feedback. Active research — not yet published.",
-    stack: ["PyTorch", "C++", "Raspberry Pi Pico", "PID"],
-    github: undefined, // No public repo — active research
-    modes: ["firmware"],
-    isActiveResearch: true,
-  },
 
   // ── QUANT ─────────────────────────────────────────────────────────────────
 
@@ -116,6 +105,16 @@ export const ALL_PROJECTS: Project[] = [
   // ── SWE ───────────────────────────────────────────────────────────────────
 
   {
+    id: "pitwall",
+    name: "PitWall",
+    tagline: "Real-time F1 telemetry & race-replay platform",
+    description:
+      "Full-stack Formula 1 telemetry platform: a live timing tower, a 3D track map (React Three Fiber) where all 20 cars render in three instanced draw calls mutated imperatively for zero React re-renders at 60fps, and a binary-search replay engine that interpolates every car's state along an arc-length-parameterized racing line for scrubbable race replay. Streams live data from OpenF1 over Server-Sent Events (server-side polling, client auto-reconnect), falls back to an Ergast-compatible source for older seasons, and degrades to a deterministic, clearly-labelled simulation when no session is live. Source-agnostic Zustand store, Zod-validated boundaries, TanStack Query caching.",
+    stack: ["Next.js", "TypeScript", "React Three Fiber", "Zustand", "TanStack Query", "SSE"],
+    github: "https://github.com/mkskart/PitWall",
+    modes: ["swe"],
+  },
+  {
     id: "jarvis",
     name: "J.A.R.V.I.S.",
     tagline: "Local-first voice AI assistant",
@@ -144,7 +143,7 @@ export const ALL_PROJECTS: Project[] = [
       "PyTorch Transformer encoder (~69K parameters) for multi-joint kinematic sequence forecasting on synthetic telemetry. Val MSE 0.003108, 0.571ms inference latency vs LSTM baseline 0.656ms. Public analog of the ML pipeline powering the HCRL bionic-hand teleoperation system.",
     stack: ["Python", "PyTorch", "Transformers"],
     github: "https://github.com/mkskart/kinematic-transformer",
-    modes: ["swe"],
+    modes: ["firmware", "quant"],
   },
   {
     id: "recruit",

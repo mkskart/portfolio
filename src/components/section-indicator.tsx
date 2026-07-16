@@ -12,6 +12,7 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: "intro", label: "Intro" },
+  { id: "experience", label: "Experience" },
   { id: "work", label: "Featured" },
   { id: "litewing", label: "LiteWing" },
   { id: "other-work", label: "Other Work" },

@@ -11,15 +11,24 @@ export interface ResumeProject {
 export interface ModeContent {
   subtitleCycle: string[];
   introParagraph: string;
+  /** Per-mode Education coursework line (matches each resume PDF). */
+  coursework: string[];
   skillCategories: { label: string; items: string[] }[];
   /** Project IDs (see projects-data.ts) in priority order for this mode. */
   projectOrder: string[];
   /** Mode-tailored project entries rendered on the resume page. */
   resumeProjects: ResumeProject[];
+  /** Full experience bullets for the resume page. */
   experienceFraming: {
+    swri: string[];
     hcrl: string[];
     nov: string[];
-    jpmc: string[];
+  };
+  /** One-line-per-role blurbs for the homepage Experience timeline. */
+  experienceBlurb: {
+    swri: string;
+    hcrl: string;
+    nov: string;
   };
 }
 
@@ -32,7 +41,13 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
       "Professional Violinist",
     ],
     introParagraph:
-      "I'm a rising junior at UT Austin building things close to the metal. I write production firmware that ships to oil rigs, build flight controllers from scratch, and contribute to bionic prosthetics research. I work in C and C++ on real hardware — nRF9160, ESP32, Raspberry Pi Pico — with Zephyr and FreeRTOS.",
+      "I'm a rising junior at UT Austin building things close to the metal. I write production firmware that's shipped to 50 oil-field units, build flight controllers from scratch, develop FPGA firmware for tactical aerospace systems, and contribute to bionic-hand research. I work in C, C++, and Verilog on real hardware — nRF9160, ESP32, RP2040, Xilinx FPGAs — with Zephyr and FreeRTOS.",
+    coursework: [
+      "Embedded Systems", "Digital Logic Design", "Digital Signal Processing",
+      "Signals & Systems", "Computer Architecture", "Operating Systems",
+      "Software Design", "Algorithms", "Circuit Theory", "Discrete Mathematics",
+      "Linear Algebra", "Differential Equations",
+    ],
     skillCategories: [
       { label: "Languages", items: ["C", "C++", "Python", "Assembly"] },
       {
@@ -43,19 +58,24 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
         ],
       },
       {
-        label: "Hardware / Tools",
+        label: "FPGA / Hardware",
         items: [
-          "nRF9160", "ESP32", "Raspberry Pi", "Arduino", "MPU-6050",
-          "KiCad", "Saleae Logic Analyzer", "nrfjprog", "AWS IoT Core",
+          "Xilinx Vivado", "Verilog", "nRF9160", "ESP32", "Raspberry Pi",
+          "Arduino", "MPU-6050", "KiCad", "Fusion 360", "Saleae Logic",
+          "nrfjprog", "AWS IoT Core",
         ],
+      },
+      {
+        label: "DevOps / Tools",
+        items: ["Docker", "GitLab CI/CD", "Git", "Linux"],
       },
     ],
     projectOrder: [
       "litewing",
       "nrf9160-template",
       "pid-motor-sim",
+      "kinematic-transformer",
       "obstacle-robot",
-      "hcrl",
     ],
     resumeProjects: [
       {
@@ -90,20 +110,26 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
         github: "https://github.com/mkskart/pid-motor-sim",
       },
       {
-        name: "Obstacle Avoidance Robot",
-        tagline: "C++ · Arduino · Raspberry Pi",
+        name: "kinematic-transformer",
+        tagline: "Python · PyTorch",
         bullets: [
-          "Hybrid Arduino/RPi navigation stack fusing ToF and ultrasonic sensors. Dijkstra pathfinding on occupancy grid with live replanning on obstacle detection.",
-          "Custom UART protocol with XOR checksum validation between boards — 99.9% packet delivery in testing.",
+          "Transformer encoder for real-time multi-joint kinematic forecasting; 0.571ms inference latency — demonstrates ML-to-actuation pipeline design for embedded control systems.",
+          "Public analog of the ML pipeline powering HCRL bionic-hand teleoperation. Synthetic telemetry dataset, fully reproducible.",
         ],
-        stack: ["C++", "Arduino", "Raspberry Pi"],
-        github: "https://github.com/mkskart/obstacle-avoidance",
+        stack: ["Python", "PyTorch"],
+        github: "https://github.com/mkskart/kinematic-transformer",
       },
     ],
     experienceFraming: {
+      swri: [
+        "Developing FPGA firmware and a bootloader for the F-16 SIU (Sensor Integration Unit) in Xilinx Vivado within an ITAR-controlled environment, consolidating divergent legacy codebases into a single validated monorepo with clean version-control history.",
+        "Validated clean-clone build portability across multiple development machines, eliminating environment-specific toolchain drift ahead of full containerization.",
+        "Building a Dockerized build environment and GitLab CI/CD pipelines to automate synthesis, implementation, and bitstream validation, reducing manual build overhead for the firmware team.",
+      ],
       hcrl: [
         "Architected C++ firmware on Raspberry Pi Pico to synchronize 16-DOF bionic hand kinematics from remote glove telemetry, achieving 1ms sensor-to-actuation latency.",
         "Tuned PID control loops for 10 independent joints, improving tracking from unreliable to consistently stable real-time replication across the full range of hand motion.",
+        "Debugged the sensor-to-actuation pipeline end-to-end using onboard logging to isolate and reduce latency bottlenecks.",
       ],
       nov: [
         "Replaced $20K/site legacy PLC/Modbus installations with a custom nRF9160 board under $250 (98% cost reduction), deployed across 50 field units within a $5K R&D budget.",
@@ -111,9 +137,11 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
         "Automated TLS certificate provisioning via Python + AT%CMNG, reducing per-unit onboarding from hours to under one minute across all deployed units.",
         "Led full product lifecycle — KiCad PCB layout, Fusion 360 enclosure, firmware dev, and field validation — delivering production-ready hardware under budget.",
       ],
-      jpmc: [
-        "Built a Spring Boot/Cassandra microservice for a 2M+ record keyspace; optimized SQL logic reducing latency by 40%.",
-      ],
+    },
+    experienceBlurb: {
+      swri: "Building FPGA firmware and a bootloader for the F-16 SIU in an ITAR-controlled environment, with a Dockerized GitLab CI/CD build pipeline.",
+      hcrl: "C++ firmware on an RP2040 syncing a 16-DOF bionic hand from glove telemetry at 1ms sensor-to-actuation latency.",
+      nov: "Replaced $20K/site legacy PLCs with a custom $250 nRF9160 board — 98% cost cut, 50 units on a LoRa mesh to AWS IoT.",
     },
   },
 
@@ -126,34 +154,38 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
     ],
     introParagraph:
       "I'm a rising junior at UT Austin building quantitative systems at the intersection of machine learning and markets. I design and backtest algorithmic trading strategies, build low-latency data pipelines, and apply transformer models to real-time signal processing. Currently running a live paper trading engine.",
+    coursework: [
+      "Algorithms", "Signals & Systems", "Digital Signal Processing",
+      "Discrete Mathematics", "Linear Algebra", "Differential Equations",
+      "Circuit Theory",
+    ],
     skillCategories: [
-      { label: "Languages", items: ["Python", "C++", "Java", "SQL", "TypeScript"] },
+      { label: "Languages", items: ["Python", "C++", "SQL", "TypeScript"] },
       {
         label: "Quant / ML",
         items: [
-          "PyTorch", "scikit-learn", "Isolation Forest", "Genetic Algorithms",
-          "Transformer Models", "Time-Series Analysis", "Backtesting",
-        ],
-      },
-      {
-        label: "Infra / Tools",
-        items: [
-          "Alpaca API", "Groq API", "FastAPI", "Docker", "SQLAlchemy",
-          "AWS IoT Core", "Git",
+          "PyTorch", "scikit-learn", "statsmodels", "Kalman Filtering",
+          "HMM Regime Detection", "Engle-Granger Cointegration", "Monte Carlo",
+          "Black-Scholes", "Genetic Algorithms",
         ],
       },
       {
         label: "Math",
         items: [
-          "Linear Algebra", "Discrete Mathematics",
-          "Digital Signal Processing", "Probability & Statistics",
+          "Linear Algebra", "Probability & Statistics",
+          "Time-Series Analysis", "Stochastic Processes",
         ],
+      },
+      {
+        label: "Infra / Tools",
+        items: ["Alpaca API", "FastAPI", "Docker", "GitLab CI/CD", "SQLAlchemy", "Git"],
       },
     ],
     projectOrder: [
       "quantclaw",
       "stat-arb",
       "options-dashboard",
+      "kinematic-transformer",
       "factor-model",
     ],
     resumeProjects: [
@@ -188,29 +220,37 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
         github: "https://github.com/mkskart/options-pricing-dashboard",
       },
       {
-        name: "Factor Model / Alpha Research",
-        tagline: "Python · Fama-French · Mean-Variance Optimization",
+        name: "kinematic-transformer",
+        tagline: "Python · PyTorch",
         bullets: [
-          "FF3 replication on 40 large-caps, 155 months. Cross-sectional mean market beta ~0.97, SMB ~−0.18 (genuine large-cap tilt), R² ~41%. Survivorship bias documented explicitly.",
-          "Barra-style max-Sharpe optimizer: Sharpe ~1.68 vs SPY ~0.9 in-sample. Custom short-term reversal factor with IC diagnostics: mean IC ~0.017 correctly identifies signal as non-tradeable in mega-caps.",
+          "PyTorch Transformer encoder (~69K params) forecasting multi-joint kinematic sequences: 0.003108 validation MSE, 0.571ms inference vs 0.656ms for an LSTM baseline.",
+          "Benchmarked against the LSTM baseline on identical synthetic telemetry to isolate architecture as the source of the latency and accuracy gains.",
         ],
-        stack: ["Python", "statsmodels", "scipy"],
-        github: "https://github.com/mkskart/factor-model-alpha-research",
+        stack: ["Python", "PyTorch"],
+        github: "https://github.com/mkskart/kinematic-transformer",
       },
     ],
     experienceFraming: {
+      swri: [
+        "Modernizing a legacy firmware build pipeline in an ITAR-controlled environment, consolidating fragmented codebases into a single validated, version-controlled system.",
+        "Validated build reproducibility across development environments, laying groundwork for full CI/CD automation — rigorous verification methodology applicable to research pipeline validation.",
+        "Building a Dockerized, GitLab CI/CD-automated build and validation pipeline to replace a manual, GUI-driven workflow — direct experience with reproducible, production-grade automation.",
+      ],
       hcrl: [
         "Trained a PyTorch Transformer on high-frequency glove telemetry to predict 16-DOF bionic hand motion, achieving 1ms sensor-to-actuation latency — directly analogous to low-latency signal-to-execution pipelines.",
-        "Applied PID control and real-time signal processing across 16 joints, improving tracking consistency from unreliable to stable — demonstrates quantitative systems tuning under real-time constraints.",
+        "Applied PID control and real-time signal processing across 16 joints, improving tracking consistency from unreliable to stable — quantitative systems tuning under real-time constraints.",
+        "Processed and cleaned high-frequency, multi-channel sensor telemetry, building intuition for handling noisy time-series data at scale.",
       ],
       nov: [
         "Architected a 40-node distributed IoT sensor network with reliable data ingestion pipelines to AWS IoT Core — experience applicable to market data collection and distributed systems design.",
         "Replaced $20K/site legacy system with $250 custom board (98% cost reduction); automated deployment tooling cutting onboarding from hours to under one minute across 50 field units.",
+        "Automated TLS certificate provisioning via Python scripting, reducing per-unit onboarding overhead across all 50 deployed units.",
       ],
-      jpmc: [
-        "Built a Spring Boot/Cassandra microservice for a 2M+ record production keyspace; optimized SQL query logic reducing latency by 40%.",
-        "Delivered a ReactJS + AG Grid real-time metadata dashboard for 200+ internal engineers on a 4-person scrum team.",
-      ],
+    },
+    experienceBlurb: {
+      swri: "Modernizing a legacy firmware build into a validated, Dockerized GitLab CI/CD pipeline in an ITAR-controlled environment.",
+      hcrl: "Trained a PyTorch Transformer on high-frequency telemetry to predict 16-DOF hand motion at 1ms latency — low-latency signal-to-execution work.",
+      nov: "Architected a 40-node distributed sensor network with reliable ingestion to AWS IoT — 98% cost cut vs the legacy system.",
     },
   },
 
@@ -222,17 +262,21 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
       "Professional Violinist",
     ],
     introParagraph:
-      "I'm a rising junior at UT Austin building full-stack systems across embedded, backend, and AI. I've shipped production firmware to 50 field units, built microservices handling millions of records, and architected agentic AI pipelines. I care about systems that actually work in the real world.",
+      "I'm a rising junior at UT Austin building full-stack systems across embedded, backend, and AI. I've shipped production firmware to 50 field units, built real-time data platforms with live 3D visualization, and architected local-first agentic AI pipelines. I care about systems that actually work in the real world.",
+    coursework: [
+      "Algorithms", "Computer Architecture", "Operating Systems",
+      "Software Design", "Digital Logic Design", "Discrete Mathematics",
+    ],
     skillCategories: [
       {
         label: "Languages",
-        items: ["Python", "C", "C++", "Java", "TypeScript", "SQL", "Assembly"],
+        items: ["Python", "C", "C++", "Java", "TypeScript", "SQL"],
       },
       {
         label: "Frameworks / Tools",
         items: [
           "React", "FastAPI", "Spring Boot", "Node.js", "Docker",
-          "SQLAlchemy", "AWS IoT Core", "Git",
+          "GitLab CI/CD", "SQLAlchemy", "Git",
         ],
       },
       {
@@ -245,12 +289,22 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
     ],
     projectOrder: [
       "jarvis",
+      "pitwall",
       "smart-scheduler",
-      "kinematic-transformer",
       "recruit",
       "vorticeapp",
     ],
     resumeProjects: [
+      {
+        name: "PitWall",
+        tagline: "Next.js · TypeScript · React Three Fiber",
+        bullets: [
+          "Real-time F1 telemetry dashboard with a 3D track map (React Three Fiber) driven by a live Server-Sent Events stream; arc-length parameterization for accurate car positioning and automatic SSE reconnect handling.",
+          "Binary-search replay engine interpolates every car's state at any instant for scrubbable race replay; dual OpenF1/Ergast sources normalized behind one typed model, with a deterministic simulation fallback when no session is live.",
+        ],
+        stack: ["Next.js", "TypeScript", "React Three Fiber", "Zustand", "SSE"],
+        github: "https://github.com/mkskart/PitWall",
+      },
       {
         name: "J.A.R.V.I.S.",
         tagline: "Python · FastAPI · Ollama · Whisper.cpp",
@@ -272,16 +326,6 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
         github: "https://github.com/mkskart/smartschedule",
       },
       {
-        name: "kinematic-transformer",
-        tagline: "Python · PyTorch",
-        bullets: [
-          "PyTorch Transformer encoder (~69K params) for multi-joint kinematic sequence forecasting. Val MSE 0.003108, 0.571ms inference vs LSTM baseline 0.656ms.",
-          "Public analog of the ML pipeline powering HCRL bionic-hand teleoperation. Synthetic telemetry dataset, fully reproducible.",
-        ],
-        stack: ["Python", "PyTorch"],
-        github: "https://github.com/mkskart/kinematic-transformer",
-      },
-      {
         name: "RecruIT",
         tagline: "Node.js · TypeScript · Express · React · Vite",
         bullets: [
@@ -291,31 +335,28 @@ export const MODE_CONTENT: Record<SiteMode, ModeContent> = {
         stack: ["Node.js", "TypeScript", "Express", "SQLite", "React", "Vite"],
         github: "https://github.com/mkskart/RecruIT",
       },
-      {
-        name: "VorticeApp",
-        tagline: "Python · matplotlib · CFD Visualization",
-        bullets: [
-          "Python data visualization tools for multi-gigabyte CFD vortex datasets, built for a graduate research team at University of Houston.",
-          "Four chart types: 3D volumetric vortex structure, hierarchical tree, scatterplot cluster analysis, time-series line tracking. Credited on NSF Multi-scale Coherent Structure Extraction project webpage.",
-        ],
-        stack: ["Python", "matplotlib", "scikit-learn"],
-        github: undefined,
-      },
     ],
     experienceFraming: {
+      swri: [
+        "Modernizing a legacy firmware build pipeline in an ITAR-controlled environment, consolidating fragmented codebases into a single validated, version-controlled monorepo.",
+        "Validated build reproducibility across multiple development machines ahead of full containerization, eliminating environment-specific toolchain drift.",
+        "Containerized the build toolchain with Docker and integrated it into a GitLab CI/CD pipeline, replacing a manual, GUI-driven workflow with automated, reproducible builds.",
+      ],
       hcrl: [
         "Integrated a PyTorch Transformer to predict 16-DOF bionic hand motion from glove telemetry, achieving 1ms sensor-to-actuation latency.",
         "Refined a modular PID motor control API for 10 joints, improving tracking from unreliable to consistently stable real-time replication.",
+        "Debugged and profiled the sensor-to-actuation pipeline end-to-end to isolate and resolve latency bottlenecks.",
       ],
       nov: [
         "Replaced a $20K/site legacy PLC system with a custom nRF9160 board under $250 (98% cost reduction), deployed across 50 field units.",
         "Engineered Zephyr RTOS C firmware for LTE-M/GNSS over a 40-node LoRa mesh to AWS IoT Core, writing a safe-shutdown protocol to prevent LTE tower rejection on power cycle.",
-        "Automated TLS certificate provisioning via Python + AT%CMNG, cutting per-unit onboarding from hours to under one minute.",
+        "Automated TLS certificate provisioning via Python + AT%CMNG scripting, reducing per-unit onboarding from hours to under a minute.",
       ],
-      jpmc: [
-        "Built a Spring Boot/Cassandra microservice designed for a 2M+ record production keyspace with dynamic filtering and sorting.",
-        "Optimized SQL query logic reducing analytical latency by 40%; delivered a ReactJS + AG Grid metadata dashboard for 200+ engineers.",
-      ],
+    },
+    experienceBlurb: {
+      swri: "Modernizing a legacy firmware build into a version-controlled monorepo, containerized with Docker and automated via GitLab CI/CD.",
+      hcrl: "Integrated a PyTorch Transformer and a modular PID control API to drive a 16-DOF bionic hand at 1ms sensor-to-actuation latency.",
+      nov: "Shipped Zephyr RTOS firmware to 50 field units — LTE-M/GNSS over a 40-node LoRa mesh to AWS IoT Core, at 1/80th the legacy cost.",
     },
   },
 };

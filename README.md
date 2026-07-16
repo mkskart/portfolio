@@ -30,8 +30,6 @@ motion and a few F1 references. It's a flex piece as much as a résumé.
   flight controller.
 - **3D garage** (`/garage`) — a hidden gallery of supercar `.glb` models in
   real-time 3D, reachable only through an easter egg.
-- **Live Spotify tile** — pulls now-playing and top tracks from the Spotify Web
-  API, and quietly falls back to a placeholder when offline.
 - **Easter eggs** — a Konami-code red flash, typed word triggers
   (`verstappen`, `litewing`), and a handful of tile-local surprises.
 - **Accessible by default** — keyboard navigation, skip-to-content, JSON-LD
@@ -45,9 +43,9 @@ conventional component structure.
 
 ```
 src/
-  app/            # routes + layout; /api/spotify/* serverless proxies
+  app/            # routes + layout
   components/     # UI by area — hero, trading, litewing, garage, hobbies, easter-eggs
-  lib/            # mode system, motion presets, project data, Spotify + theme helpers
+  lib/            # mode system, motion presets, project data, theme helpers
 public/           # resume PDFs, 3D .glb models, audio/video, images
 ```
 
@@ -72,7 +70,6 @@ public/           # resume PDFs, 3D .glb models, audio/video, images
 | `/litewing`    | LiteWing flight-controller deep dive                  |
 | `/resume`      | Animated resume with a per-mode PDF download          |
 | `/garage`      | Hidden 3D car gallery                                 |
-| `/api/spotify/*` | `now-playing` and `top-tracks` serverless proxies   |
 
 **Design system** — colors, typography, and effects are CSS variables in
 `app/globals.css`, registered as Tailwind v4 theme tokens. Motion defaults live
@@ -87,7 +84,6 @@ in `lib/motion.ts`; the reduced-motion gate in `lib/reduced-motion.ts`.
 | Motion     | Framer Motion                                                 |
 | 3D         | React Three Fiber · drei · three                             |
 | Data viz   | Recharts                                                      |
-| Data       | SWR · Spotify Web API                                        |
 | Fonts      | Space Grotesk (display) · Inter (sans) · JetBrains Mono (mono) |
 | Hosting    | Vercel                                                        |
 

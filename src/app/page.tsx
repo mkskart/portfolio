@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/hero/hero";
 import { Intro } from "@/components/intro";
+import { Experience } from "@/components/experience";
 import { FeaturedSections } from "@/components/featured-sections";
 import { OtherWork } from "@/components/other-work";
 import { HobbiesStack } from "@/components/hobbies/hobbies-stack";
 import { Contact } from "@/components/contact";
-import { SpotifyMiniPlayer } from "@/components/spotify-mini-player";
 
 const MODE_DESCRIPTIONS: Record<string, string> = {
   firmware:
@@ -37,11 +37,11 @@ export default function HomePage() {
     <>
       <Hero />
       <Intro />
+      <Experience />
       <FeaturedSections />
       <OtherWork />
       <HobbiesStack />
       <Contact />
-      <SpotifyMiniPlayer />
     </>
   );
 }
